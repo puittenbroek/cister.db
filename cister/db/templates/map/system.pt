@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+         <title tal:content="string:Cister - System - ${location}">Cister - System</title>
+
+    </tal:meta>
+
+    <body metal:fill-slot="content" >
+            <tal:block metal:use-macro="generic_macros.macros['map_info_links']" />
+        <div id="centerbody" class="map system_view">
+            <table id="system_view" class="system">
+                <tbody>
+                    <tr>
+                    <tal:block tal:repeat="ind python: range(1,columns+1)">
+                        <td tal:define="subset python: [x for x in locations if x['location'][10:11] =='%s'%ind];">
+                            <tal:block condition="not: subset">
+                                <div class="astro">
+                                     <a>
+                                     <img width="40"
+                                     height="40"
+                                     src=""
+                                     tal:attributes="src string:/static/images/Belt.jpg;
+                                                     title string:Uninhabitable" />
+                                    </a>
+                                </div>
+                            </tal:block>
+                            <tal:block tal:repeat="location subset">
+                               <tal:definer tal:define="base location['base'];
+                                                        terrain location['terrain'];
+                                                        size location['size'];
+                                                        loc location['location']">
+                                <div class="astro" tal:condition="python: repeat.location.index==0 and location['location'][11] !='0'">
+                                    <a>
+                                     <img width="40"
+                                     height="40"
+                                     src=""
+                                     tal:attributes="src string:/static/images/Belt.jpg;
+                                                     title string:Uninhabitable" />
+                                    </a>
+                                </div>
+                                <div class="astro">
+                                    <a href=""
+                                       tal:attributes="href string:/map/${location['location']}">
+                                    <img width="50"
+                                         height="50"
+                                         src=""
+                                         tal:attributes="src string:/static/images/${terrain}.jpg;
+                                                         height string:${size};
+                                                         width string:${size};
+                                                         title string:${terrain} (${loc});
+                                                         alt string:${terrain} (${loc});" />
+                                    </a>
+                                    <tal:base tal:condition="python: base">
+                                        <span tal:replace="structure h.humanreadPlayerURL(base.owner)" />
+                                        <span tal:replace="structure h.humanreadPlayerURL(base.occupier)" />
+                                        <span class="age" 
+                                              tal:attributes="title string: Last scouted by ${h.humanreadPlayer(base.updater)}"
+                                              tal:content="h.humanreadAge((datetime.now() - base.timestamp))" />
+                                    </tal:base>
+                                    <span class="grey_text" tal:condition="python: not location['base']" tal:content="string: -empty-" />
+                                    <small class="fleets" >
+                                            <div tal:replace="python: h.humanreadFleets(fleets.get(loc, {}))" />
+                                    </small>
+                                    <tal:base tal:condition="python: base">
+                                        <small class="jg" tal:condition="base.jg > 0" tal:content="string: JG ${base.jg}"/>
+                                        <small class="cc" tal:condition="base.cc > 0" tal:content="string: CC ${base.cc}"/>
+                                        <small class="cap" tal:condition="base.capital > 0" tal:content="string: Capital ${base.capital}"/>
+                                     </tal:base>
+                                </div>
+                             </tal:definer>
+                            </tal:block>
+                        </td>
+                    </tal:block>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="clearer">&nbsp;</div>
+        </div>
+    </body>
+</html>
+

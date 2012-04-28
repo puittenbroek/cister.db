@@ -1,0 +1,72 @@
+
+<configure xmlns="http://pylonshq.com/pyramid">
+
+    <!--route
+        name="newslist"
+        pattern="/news"
+        view_attr="list"
+        view=".views.news.NewsView"
+        renderer="templates/news/list.pt"
+        permission="view"
+    /-->
+    <route
+        name="userlist"
+        pattern="/admin/useraccesscontrol"
+        view_attr="userlist"
+        view=".views.admin.UserAccessControlView"
+        renderer="templates/admin/userlist.pt"
+        request_method='GET'
+        permission="admin_view"
+    />
+
+    <route
+        name="userlistpost"
+        pattern="/admin/useraccesscontrol"
+        view_attr="submit"
+        view=".views.admin.UserAccessControlView"
+        renderer="templates/admin/userlist.pt"
+        request_method='POST'
+        permission="admin_view"
+    />
+
+    <route
+        name="groups"
+        pattern="/admin/groupcontrol"
+        view_attr="grouplist"
+        view=".views.admin.GroupControlView"
+        renderer="templates/admin/groups.pt"
+        request_method='GET'
+        permission="admin_view"
+    />
+
+    <route
+        name="groupspost"
+        pattern="/admin/groupcontrol"
+        view_attr="submit"
+        view=".views.admin.GroupControlView"
+        renderer="templates/admin/groups.pt"
+        request_method='POST'
+        permission="admin_view"
+    />
+    <route
+        name="groupmembers"
+        pattern="/admin/groupcontrol/{groupid}"
+        view_attr="grouplist"
+        view=".views.admin.GroupControlView"
+        renderer="templates/admin/groups.pt"
+        request_method='GET'
+        permission="admin_view"
+    />
+
+      <route
+        name="groupmemberspost"
+        pattern="/admin/groupcontrol/{groupid}"
+        view_attr="membersubmit"
+        view=".views.admin.GroupControlView"
+        renderer="templates/admin/groups.pt"
+        request_method='POST'
+        permission="admin_view"
+    />
+
+    
+</configure>

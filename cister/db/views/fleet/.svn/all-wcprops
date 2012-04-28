@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/cister/!svn/ver/6/trunk/cister/views/fleet
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/cister/!svn/ver/2/trunk/cister/views/fleet/__init__.py
+END
+show.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/cister/!svn/ver/8/trunk/cister/views/fleet/show.py
+END
+search.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/cister/!svn/ver/8/trunk/cister/views/fleet/search.py
+END

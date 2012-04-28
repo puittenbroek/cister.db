@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+
+<head>
+     <title tal:content="string:Cister - Galaxy - ${location}">Cister - Galaxy</title>
+     <style type="text/css" tal:content="h.makeStyling(legenda)" />
+     <script type="text/javascript">
+         $(document).ready(function() {
+         $('.legenda_table td').hover(
+        function(){
+            $(this).parent().addClass("highlight");
+            $("."+$(this).attr("highlight")).addClass("highlight");},
+        function(){
+            $("."+$(this).attr("highlight")).removeClass("highlight");
+            $(this).parent().removeClass("highlight");
+            });
+         });
+      </script>
+     <link rel="stylesheet" href="${request.static_url('cister:static/pylons.css')}" type="text/css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="${request.static_url('cister:static/cister.css')}" type="text/css" media="screen" charset="utf-8" />
+</head>
+   <body id="popup-galaxy">
+         <div id="centerbody" class="map galaxy_view">
+            <table id="galaxy" tal:attributes="style string:background-image:url('/static/images/galaxies/Alpha-${galaxy}BR.jpg')">
+                <tbody>
+                    <tr tal:repeat="row regions.keys()">
+                        <tal:repeater tal:repeat="col regions[row].keys()">
+                            <td class="region"
+                                     tal:define="region_location string:A${galaxy}:${row}${col};
+                                                 color_dict regions[row][col]['base_age'];
+                                                 astros regions[row][col]['astro_count'];
+                                                 bases regions[row][col]['base_count'];
+                                                 age color_dict.get('label', '');
+                                                 age python: age and label and '%s: %s' % (label,age) or '';
+                                                 the_class regions[row][col]['astro_count']>0 and color_dict.get('class','no-bases') or ''"
+                                     tal:attributes="class the_class">
+                                <tal:block tal:condition="python: not astros" >
+                                        <a>
+                                            <img src="/static/images/spacer.gif"/>
+                                        </a>
+                                </tal:block>
+                                    <tal:block tal:condition="python: astros > 0" >
+                                        <a href="" 
+                                           tal:attributes="href string:/map/${region_location};
+                                                           title string: Astros: ${astros}, Bases: ${bases} ${age}">
+                                            <img src="/static/images/spacer.gif"/>
+                                        </a>
+                                </tal:block>
+                            </td>
+                        </tal:repeater>
+                    </tr>
+                </tbody>
+            </table>
+         </div>
+   </body>
+</html>
+

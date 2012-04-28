@@ -1,0 +1,59 @@
+#main_navigation.navigation li.admin {
+    float: right;
+}
+
+
+input.activate, input.unban {
+    background-color: green;
+}
+input.deactivate {
+    background-color: blue;
+}
+
+input.ban {
+    background-color: orange;
+}
+
+input.delete {
+    background-color: red;
+}
+a.members {
+    background-color: green;
+    padding: 0 6px;
+    border: 1px solid #3B3B3B;
+    font-weight:bold;
+    height: 18.3333px;
+    line-height:16.5px;
+    white-space:pre;
+}
+.addplayer, .addgroup {
+    margin-top: 1em;
+}
+
+.ui-widget-content, .ui-widget-content a  {
+    color: white;
+}
+#centerbody  {
+    background-image: None;
+}
+
+.ui-widget-header {
+    background-image: none;
+    background-color: #1D1D1D;
+}
+.ui-state-active {
+    background-color: #1A1A1A;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    background-image:none;
+    background-color: #1D1D1D;
+    
+}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited,
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited{
+    color: #F3EC84;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    background-image: none;
+    background-color: #1A1A1A;
+}

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/cister/!svn/ver/6/trunk/cister/views
+END
+login.py
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/cister/!svn/ver/14/trunk/cister/views/login.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/cister/!svn/ver/2/trunk/cister/views/__init__.py
+END
+mixin.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/cister/!svn/ver/8/trunk/cister/views/mixin.py
+END
+viewbase.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/cister/!svn/ver/8/trunk/cister/views/viewbase.py
+END
+index.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/cister/!svn/ver/8/trunk/cister/views/index.py
+END

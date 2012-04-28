@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <head>
+
+        <tal:meta metal:fill-slot="extra-meta-slot">
+            <title>Cister - News</title>
+        </tal:meta>
+        <tal:meta metal:fill-slot="script_slot">
+            <link   rel="stylesheet"
+                    href="${request.static_url('cister:static/news.css')}"
+                    type="text/css"
+                    media="screen"
+                    charset="utf-8" />
+        </tal:meta>
+    </head>
+    <body>
+        <tal:block metal:fill-slot="content">
+            <div tal:condition="message" id="centerbody" class="message">
+                <p tal:content="message" />
+            </div>
+            <div id="centerbody" class="to_activate">
+                <table>
+                    <tr><th></th></tr>
+                    <tr tal:repeat="user to_activate">
+                        <td tal:content="user.player_id" />
+                        <td tal:content="user.player_name" />
+                        <td tal:content="user.creation" />
+                    </tr>
+                </table>
+            </div>
+            <div id="centerbody" class="activate">
+                                <table>
+                    <tr>
+                        <th>PlayerID</th>
+                        <th>Player</th>
+                        <th>Activated For</th>
+                        <th>Last Activity</th>
+                    </tr>
+                    <tr tal:repeat="user activate">
+                        <td tal:content="user.playerid" />
+                        <td tal:content="h.humanreadPlayer(user.player)" tal:attributes="title user.guild and user.guild.name or ''"/>
+                        <td tal:content="h.humanreadAge((datetime.now() - user.activated_on), True)" />
+
+                        <td tal:content="h.humanreadLastActivity(user.last_script, user.last_web) " />
+                        <td><form action="" method="POST">
+                            <input type="hidden" name="playerid" tal:attributes="value user.playerid" />
+                            <input type="submit" class="deactivate" name="deactivate" value="Deactivate "/>
+                            <input type="submit" class="ban" name="ban" value="Ban"/>
+                            <input type="submit" class="delete" name="delete" value="Delete"/>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="centerbody" class="banned">
+            </div>
+        </tal:block>
+    </body>
+</html>

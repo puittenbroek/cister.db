@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/cister/!svn/ver/6/trunk/cister/views/base
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/cister/!svn/ver/2/trunk/cister/views/base/__init__.py
+END
+search.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/cister/!svn/ver/8/trunk/cister/views/base/search.py
+END

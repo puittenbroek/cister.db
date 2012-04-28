@@ -1,0 +1,1 @@
+<div tal:replace="${request.static_url('cister.db:static/css/cister.css')}" />

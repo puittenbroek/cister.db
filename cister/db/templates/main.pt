@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal">
+
+
+    <head metal:define-macro="head">
+
+        <tal:meta metal:define-slot="extra-meta-slot">
+        </tal:meta>
+
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+        <meta name="description" content="cister webapplication" />
+        <link rel="shortcut icon" href="${request.static_url('cister.db:static/favicon.ico')}" />
+        <link rel="stylesheet" href="${request.static_url('cister.db:static/css/pylons.css')}" type="text/css" media="screen" charset="utf-8" />
+        <link rel="stylesheet" href="${request.static_url('cister.db:static/css/cister.css')}" type="text/css" media="screen" charset="utf-8" />
+        <link rel="stylesheet" href="${request.static_url('cister.db:static/css/smoothness/jquery-ui-1.8.18.custom.css')}" type="text/css" media="screen" charset="utf-8" />
+        <script src="${request.static_url('cister.db:static/js/jquery-1.7.1.js')}" type="text/javascript"></script>
+        <script src="${request.static_url('cister.db:static/js/jquery.tablesorter.js')}" type="text/javascript"></script>
+        <script src="${request.static_url('cister.db:static/js/jquery-ui-1.8.18.custom.min.js')}" type="text/javascript"></script>
+        <script src="${request.static_url('cister.db:static/js/jquery.cookie.js')}" type="text/javascript"></script>
+        <script src="${request.static_url('cister.db:static/js/cister.js')}" type="text/javascript"></script>
+        <tal:block tal:condition="view.in_manage_group()">
+            <link rel="stylesheet" href="${request.static_url('cister.db:static/css/admin.css')}" type="text/css" media="screen" charset="utf-8" />
+        </tal:block>
+
+        <tal:scripts metal:define-slot="script_slot">
+        </tal:scripts>
+
+    </head>
+    <body>
+        <tal:block metal:define-macro="navigation">
+            <div id="main_navigation" class="navigation">
+                <ul>
+                    <li>
+                        <a href="/news">News</a>
+                        <a href="/bases">Bases</a>
+                        <a href="/map">Map</a>
+                        <a href="/fleets">Fleets</a>
+                    </li>
+                    <tal:block tal:condition="view.in_manage_group()">
+                        <li class="admin">
+                            Admin Tools:
+                            <a href="/admin/useraccesscontrol">User Access</a>
+                            <a href="/admin/groupcontrol">Groups</a>
+                            <a href="/admin/logs">Search Logs</a>
+                        </li>
+                    </tal:block>
+                </ul>
+            </div>
+            <tal:block metal:define-slot="above-content">
+            </tal:block>
+            <tal:block metal:define-slot="content">
+            </tal:block>
+            <tal:block metal:define-slot="below-content">
+            </tal:block>
+
+        </tal:block>
+    </body>
+</html>

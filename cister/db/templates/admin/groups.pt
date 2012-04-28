@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <head>
+
+        <tal:meta metal:fill-slot="extra-meta-slot">
+            <title>Cister - Group Control</title>
+        </tal:meta>
+        <tal:meta metal:fill-slot="script_slot">
+            <link   rel="stylesheet"
+                    href="${request.static_url('cister.db:static/css/news.css')}"
+                    type="text/css"
+                    media="screen"
+                    charset="utf-8" />
+              <script src="${request.static_url('cister.db:static/js/jquery.tablesorter.js')}" type="text/javascript"></script>
+              <!--script src="${request.static_url('cister.db:static/js/jquery.metadata.js')}" type="text/javascript"></script-->
+              <script src="${request.static_url('cister.db:static/js/admin.js')}" type="text/javascript"></script>
+
+        </tal:meta>
+    </head>
+    <body>
+        <tal:block metal:fill-slot="content">
+            <div tal:condition="message" id="centerbody" class="message">
+                <p tal:content="message" />
+            </div>
+            <div id="centerbody" class="tabs">
+                <ul>
+                    <li><a href="#groups">Groups</a></li>
+                    <li tal:condition="group"><a href="#groupmembers" tal:content="string: ${group.name}'s Members">Current</a></li>
+                    <!--li><a href="#banned_members">Banned</a></li-->
+                </ul>
+                <div id="groups">
+                    <table class="tablesorter" tal:condition="current_groups.count()">
+                        <thead>
+                        <tr>
+                            <th>Group ID</th>
+                            <th>Group Name</th>
+                            <th>Group Guild</th>
+                            <th>Controls</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr tal:repeat="group current_groups">
+                            <td tal:content="group.id" />
+                            <td tal:content="group.name" />
+                            <td tal:content="group.guild.tag" />
+                            <td><form action="" method="POST">
+                                <a class="members"
+                                href="#"
+                                tal:attributes="href  string:/admin/groupcontrol/${group.id}">Members </a>
+                                <input type="hidden" name="groupid" tal:attributes="value group.id" />
+                                <input type="submit" class="delete" name="deletegroup" value="Delete"/>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p tal:condition="not: current_groups.count()">No groups</p>
+                    <div class="addgroup">
+                        <form action="" method="POST">
+                            <table>
+                            <tr>
+                                <th colspan="2">Add a new group</th></tr>
+                            <tr>
+                                <td><label for="groupname">Name: </label></td>
+                                <td><input type="input" name="groupname" value=""/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="guildid">Guild: </label></td>
+                                <td><select name="guildid">
+                                <option tal:repeat="guild optional_guilds"
+                                        tal:attributes="value guild.id"
+                                        tal:content="string: ${guild.tag} (#${guild.id})" />
+                                
+                            </select></td>
+                            <tr><td cols="2">
+                                <input type="submit" class="activate" name="addtogroup" value="Add to group"/>
+                            </td>
+                            </tr>
+                            </table>
+                        </form>
+
+                    </div>
+                </div>
+                <div id="groupmembers" class="activate" tal:condition="group">
+                    <table class="tablesorter">
+                        <thead>
+                        <tr>
+                            <th>PlayerID</th>
+                            <th>Player</th>
+                            <th class="{sorter: 'digit'}">Member Since</th>
+                            <th>Last Activity</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr tal:repeat="membership group.memberships">
+                            <td tal:content="membership.userid" />
+                            <td tal:content="h.humanreadPlayer(membership.user.player)" />
+                            <td tal:content="h.humanreadAge((datetime.now() - membership.added_on), True)" />
+
+                            <td tal:content="h.humanreadLastActivity(membership.user.last_script, membership.user.last_web) " />
+                            <td><form action="" method="POST">
+                                <input type="hidden" name="groupid" tal:attributes="value group.id" />
+                                <input type="hidden" name="userid" tal:attributes="value membership.userid" />
+                                <input type="submit" class="delete" name="removefromgroup" value="Remove from group"/>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="addplayer">
+                        <form action="" method="POST">Add player:
+                            <input type="hidden" name="groupid" tal:attributes="value group.id" />
+                            <select name="userid">
+                                <option tal:repeat="user optional_users"
+                                        tal:attributes="value user.playerid"
+                                        tal:content="h.humanreadPlayer(user.player)" />
+                                <input type="submit" class="activate" name="addtogroup" value="Add to group"/>
+                            </select>
+
+                        </form>
+                    </div>
+                </div>
+                <!--div id="banned_members" class="banned">
+                    <table class="tablesorter" tal:condition="banned.count()">
+                        <thead>
+                        <tr>
+                            <th>PlayerID</th>
+                            <th>Player</th>
+                            <th class="{sorter: 'digit'}">Banned On</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr tal:repeat="user banned">
+                            <td tal:content="user.playerid" />
+                            <td tal:content="h.humanreadPlayer(user.player)" tal:attributes="title user.guild and user.guild.name or ''"/>
+                            <td tal:content="user.banned_on" />
+                            <td><form action="" method="POST">
+                                <input type="hidden" name="playerid" tal:attributes="value user.playerid" />
+                                <input type="submit" class="unban" name="unban" value="Unban"/>
+                                <input type="submit" class="delete" name="delete" value="Delete"/>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <p tal:condition="not: banned.count()">Nobody to unban</p>
+                </div-->
+             </div>
+        </tal:block>
+    </body>
+</html>

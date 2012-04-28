@@ -1,0 +1,52 @@
+from sqlalchemy import or_
+
+from cister.models.cister import CISUser
+from cister.models.cister import DBSession
+from datetime import datetime, timedelta
+import re
+import webhelpers.paginate as paginate
+from webhelpers.util import update_params
+from cister.views.viewbase import BaseCisterView
+
+guild_id_pattern = re.compile("\[([-+]\d+)\]")
+guild_tag_pattern = re.compile("\[(.{1,8})\]")
+id_pattern = re.compile("(\d+)")
+
+
+class UserAccessControlView(BaseCisterView):
+
+    def userlist(self):
+        dbsession = DBSession()
+
+
+        returnvalue = {}
+        returnvalue['to_activate'] = dbsession.query(CISUser).filter(CISUser.activated==0).filter(CISUser.banned==0)
+        returnvalue['activate'] = dbsession.query(CISUser).filter(CISUser.activated==1).filter(CISUser.banned==0)
+        returnvalue['banned'] = dbsession.query(CISUser).filter(CISUser.banned==1)
+
+        returnvalue['message'] = None
+        
+        return returnvalue
+
+
+    def submit(self):
+        params = self.request.params
+        ourvalues = {}
+        if 'ban' in params or 'deactivate' in params or 'delete' in params:
+            playerid = params.get('playerid')
+            if 'ban' in params:
+                ourvalues['message'] = 'Succesfully banned player: %s ' % playerid
+
+            if 'deactivate' in params:
+                ourvalues['message'] = 'Succesfully deactivated player: %s ' % playerid
+
+            if 'delete' in params:
+                ourvalues['message'] = 'Succesfully delete player: %s ' % playerid
+
+
+
+        returnvalue =  self.userlist()
+        returnvalue.update(ourvalues)
+
+        return returnvalue
+        

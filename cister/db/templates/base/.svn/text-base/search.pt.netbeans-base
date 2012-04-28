@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <head>
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+    <title>Cister - Base Search</title>
+    </tal:meta>
+
+    </head>
+    <body>
+        <tal:block metal:fill-slot="content" tal:define="navigation bases">
+          <div id="centerbody">
+            <div class="filters" id="cis_base_filters" >
+                <form action="" method="GET">
+                 <div id="filters">
+                    <tal metal:use-macro="generic_macros.macros['search_filters']" />
+                 </div>
+                 <div id="field_filters">
+                    <tal metal:use-macro="generic_macros.macros['field_filters']" />
+                 </div>
+                 <input name="form.submitted" type="submit" value="Search" />
+                </form>
+            </div>
+
+            <div id="cis_bases_result" tal:condition="bases" metal:define-macro="base_search_result">
+                <div id="base_navigation" class="navigation">
+
+                    <tal metal:use-macro="generic_macros.macros['navigation']" />
+                </div>
+                <table id="cis_bases">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th tal:condition="python: request.params.has_key('show_basename')">Base Name</th>
+                            <th>Owner</th>
+                            <th tal:condition="python: request.params.has_key('show_occ')">Occupier</th>
+                            <th tal:condition="python: request.params.has_key('show_eco')">Economy</th>
+                            <th tal:condition="python: request.params.has_key('show_ofs')">Fleets</th>
+                            <th tal:condition="python: request.params.has_key('show_cc')">Command Centers</th>
+                            <th tal:condition="python: request.params.has_key('show_jg')">Jump Gate</th>
+                            <th tal:condition="python: request.params.has_key('show_cap')">Capital</th>
+                            <th tal:condition="python: request.params.has_key('show_def')">Defenses</th>
+                            <th tal:condition="python: request.params.has_key('show_lsd')">Last System Scouted</th>
+                            <th tal:condition="python: request.params.has_key('show_lsdd')">Last Detail Scouted</th>
+                            <th tal:condition="python: request.params.has_key('show_lsp')">Last Scouter</th>
+                        </tr>
+                    </thead>
+                    <tr tal:repeat="base bases">
+                        <td class="location">
+                            <a href="#"
+                                tal:attributes="href string: /map/${base.location}"
+                            tal:content="python: base.location">Loc</a></td>
+                        <td tal:condition="python: request.params.has_key('show_basename')"
+                            align="center" tal:content="python: base.name">Name</td>
+                        <td class="owner" align="center">
+                            <tal:block tal:replace="structure h.humanreadOwner(base)"> Owner </tal:block>
+                        </td>
+                         <td tal:condition="python: request.params.has_key('show_occ')"
+                            class="occupier" align="center">
+                            <tal:block tal:replace="structure h.humanreadOccupier(base)"> Occupier </tal:block>
+                        </td>
+                        <td align="center" class="economy" tal:condition="python: request.params.has_key('show_eco')">
+                            <div tal:condition="python: base.economy != -1"
+                                 tal:replace="string: ${base.economy}$" />
+                        </td>
+                        <td align="center" class="owner_fleet" tal:condition="python: request.params.has_key('show_ofs')">
+
+                            <div tal:replace="python: fleetstrings.get(base.location, {}).get('owner',0)" />
+                            /
+                            <div tal:replace="python: fleetstrings.get(base.location, {}).get('guild',0)" />
+                            /
+                            <div tal:replace="python: fleetstrings.get(base.location, {}).get('other',0)" />
+                        </td>
+                        <td align="center" class="command-center" tal:condition="python: request.params.has_key('show_cc')">
+                            <div tal:condition="python: base.cc != -1"
+                                 tal:replace="string: ${base.cc}cc" />
+                        </td>
+                        <td align="center" class="jump-gate" tal:condition="python: request.params.has_key('show_jg')">
+                            <div tal:condition="python: base.jg != -1"
+                                 tal:replace="string: ${base.jg}jg" />
+                        </td>
+                        <td align="center" class="capital"  tal:condition="python: request.params.has_key('show_cap')">
+                            <div tal:condition="python: base.capital != -1"
+                                 tal:replace="string: ${base.capital}©" />
+                        </td>
+                        <td align="center" class="defense"  tal:condition="python: request.params.has_key('show_def')">
+                            <div tal:condition="base.defense" tal:replace="python: h.humanreadDefense(base.defense)" />
+                        </td>
+                        <td align="center" class="base_timestamp"  tal:condition="python: request.params.has_key('show_lsd')">
+                            <div tal:condition="base.timestamp" tal:replace="python: h.humanreadAge((datetime.now() - base.timestamp))" />
+                        </td>
+                        <td align="center" class="fleet_timestamp"  tal:condition="python: request.params.has_key('show_lsfd')">
+                            <div tal:replace="python: h.humanreadAge((datetime.now() - base.owner_fleet_timestamp))" />
+                        </td>
+                        <td align="center" class="defense_timestamp"  tal:condition="python: request.params.has_key('show_lsdd')">
+                            <div tal:condition="base.defensetimestamp" tal:replace="python: h.humanreadAge((datetime.now() - base.defensetimestamp))" />
+                        </td>
+                        <td tal:condition="python: request.params.has_key('show_lsp')"
+                            class="updater" align="center">
+                            <tal:block tal:replace="structure h.humanreadScouter(base)"> Owner </tal:block>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+             <div id="cis_bases_result" tal:condition="python: not bases and 'form.submitted' in request.params">
+                 <h3>Alas ... nothing matched your search</h3>
+             </div>
+           </div>
+        </tal:block>
+    </body>
+</html>
+

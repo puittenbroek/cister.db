@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+    <title tal:content="string: Cister - Fleet ${fleetid}">Cister - Fleet Search</title>
+    <script type="text/javascript">
+        var start_date = (new Date).getTime();
+        var q = 0;
+
+        function t()
+        {
+            for(n=0;n<=q;n++)
+            {
+                now = (new Date).getTime();
+                elem=document.getElementById('time'+n);
+                if (elem) {
+                    m = 0;
+                    h = 0;
+                    var diff = (now - start_date) / 1000;
+                    s = elem.title - diff;
+
+                    if (s >= 1) {
+                        h = Math.floor(s / 3600);
+                        m = Math.floor((s % 3600) / 60);
+                        s = Math.floor((s % 60));
+                        elem.innerHTML = h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                    }
+                    else {
+                        elem.innerHTML = '-';
+                    }
+                }
+            }
+        }
+        setInterval('t();', 200);1
+    </script>
+    </tal:meta>
+
+    <body metal:fill-slot="content" >
+      <div id="centerbody" class="fleetinfo"
+        tal:define="arrivalseconds python: h.humanreadArrival(fleet.arrival, datetime.now(), fleet.timestamp)">
+                <div id="fleet_info">
+                    <table>
+                        <thead>
+                               <th>Owner</th>
+                               <th>Location</th>
+                               <th>Destination</th>
+                               <th>Arrival</th>
+                               <th>Last Updated</th>
+                        </thead>
+                        <tbody>
+                               <td align="center">
+                                   <tal:block tal:replace="structure h.humanreadPlayerURL(fleet.owner)"> Owner </tal:block>
+                               </td>
+                               <td align="center">
+                                   <a   tal:condition="python: not arrivalseconds > 0"
+                                        tal:content="fleet.location"
+                                        tal:attributes="href string:/map/${fleet.location}">
+                                       
+                                   </a>
+                               </td>
+                               <td align="center">
+                                    <a   tal:condition="python: arrivalseconds > 0"
+                                        tal:content="fleet.location"
+                                        tal:attributes="href string:/map/${fleet.location}">
+
+                                   </a>
+                               </td>
+                               <td align="center">
+                                   <div tal:condition="python: arrivalseconds > 0" tal:content="arrivalseconds"
+                                                        tal:attributes="title arrivalseconds;
+                                                                        id string:time0"/>
+                               </td>
+                               <td align="center">
+                                   <div tal:condition="fleet.timestamp" tal:replace="python: h.humanreadAge((datetime.now() - fleet.timestamp))" />
+                               </td>
+                        </tbody>
+                    </table>
+                </div>
+      </div>
+       <div id="centerbody" class="fleetdetails">
+            <tal:header tal:condition="python: not len(fleet.details)>2">
+                <h2>No fleet details</h2>
+            </tal:header>
+            <tal:header tal:condition="python: len(fleet.details)>2">
+                <table  id="fleetdetails_table"
+                        tal:define="details h.dictFleetDetails(fleet.details)">
+                    <thead>
+                        <tr>
+                            <th colspan="2">Fleet Overview</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th class="blank" align="center"><b>Units</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr tal:repeat="(type, quan) details">
+                            <td><b tal:content="type"></b></td>
+                            <td align="center" tal:content="quan"></td>
+                        </tr>
+                        <tr><td colspan="2">&nbsp;</td></tr>
+                        <tr class="fleetsum">
+                            <td>
+                               Fleet Size: 
+                            </td>
+                            <td><span tal:replace="fleet.size" /></td>
+                        </tr>
+                    </tbody>
+
+
+                </table>
+            </tal:header>
+                   
+
+        </div>
+      
+    </body>
+
+</html>
+
+

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/cister/!svn/ver/2/trunk/cister/templates
+END
+unauthorized.pt
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/cister/!svn/ver/8/trunk/cister/templates/unauthorized.pt
+END
+main.pt
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/cister/!svn/ver/8/trunk/cister/templates/main.pt
+END
+index.pt
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/cister/!svn/ver/2/trunk/cister/templates/index.pt
+END
+login.pt
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/cister/!svn/ver/8/trunk/cister/templates/login.pt
+END
+notfound.pt
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/cister/!svn/ver/2/trunk/cister/templates/notfound.pt
+END
+forbidden.pt
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/cister/!svn/ver/8/trunk/cister/templates/forbidden.pt
+END

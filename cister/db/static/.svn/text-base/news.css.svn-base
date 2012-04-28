@@ -1,0 +1,28 @@
+.news_list{
+    padding: 5px;
+}
+.news_item {
+    margin: 1em;
+    width: 300px;
+    margin-bottom: 1.5em;
+}
+.news_header {
+    font-size: 1em;
+    margin-bottom: 0.2em;
+}
+.news_date {
+    font-style:italic;
+    display:inline;
+    font-size: 0.8em;
+}
+.news_title {
+    display:inline;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+.news_date, .news_title {
+}
+
+.news_body{
+
+}

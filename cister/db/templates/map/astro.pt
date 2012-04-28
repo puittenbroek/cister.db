@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+       metal:use-macro="main">
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+         <title tal:content="string:Cister - Astro - ${location}">Cister - Astro</title>
+    <script tal:condition="fleets" type="text/javascript">
+        var start_date = (new Date).getTime();
+        var q = 0;
+
+        function t()
+        {
+            for(n=0;n<=q;n++)
+            {
+                now = (new Date).getTime();
+                elem=document.getElementById('time'+n);
+                if (elem) {
+                    m = 0;
+                    h = 0;
+                    var diff = (now - start_date) / 1000;
+                    s = elem.title - diff;
+
+                    if (s >= 1) {
+                        h = Math.floor(s / 3600);
+                        m = Math.floor((s % 3600) / 60);
+                        s = Math.floor((s % 60));
+                        elem.innerHTML = h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                    }
+                    else {
+                        elem.innerHTML = '-';
+                    }
+                }
+            }
+        }
+        setInterval('t();', 200);1
+    </script>
+     <script tal:condition="fleets" type="text/javascript" tal:content="python: 'q=%d'% fleets_count">
+     </script>
+    </tal:meta>
+
+    <body tal:define="extra_classes string:map">
+
+        
+        <tal:block metal:fill-slot="content" >
+            <center>
+                <h1>Viewing database information of:
+                    <a href="map.aspx?gal=A07" 
+                        tal:attributes="href string:/map/A${galaxy}"
+                        tal:content="string: Galaxy A${galaxy}">Galaxy A0</a> &gt;
+                    <a href="map.aspx?loc=A07:16"
+                        tal:attributes="href string:/map/A${galaxy}:${region}"
+                        tal:content="string: Region ${region}">Region 16</a> &gt;
+                    <a href="map.aspx?loc=A07:16:51"
+                        tal:attributes="href string:/map/A${galaxy}:${region}:${system}"
+                        tal:content="string: System ${system}">System 51</a> &gt;
+                    <span tal:replace="string: Astro ${astro}&nbsp; &nbsp; &nbsp; (${location}) ">Astro 30 &nbsp; &nbsp; &nbsp; (A07:16:51:30) &nbsp;</span>
+                    </h1>
+                    <a href="" tal:attributes="href string:http://alpha.astroempires.com/map.aspx?loc=A${galaxy}:${region}:${system}:${astro}">
+                        Visit this astro in Astro Empires
+                    </a>
+            </center>
+            <div id="centerbody" class="map" >
+                <div id="base_info" tal:condition="base">
+                    <table>
+                        <thead>
+                               <th>Location</th>
+                               <th>Base Name</th>
+                        </thead>
+                        <tbody>
+                               <td align="center" tal:content="base.location">BaseLocation</td>
+                               <td align="center" tal:content="python: base.name and base.name or 'Unknown' ">BaseName</td>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="main_info"
+                     tal:define="astro_type astrolocation.terrain.name">
+                   <table width="100%" align="center"
+                          tal:define="width python: base and '33%' or '50%'">
+                       <tbody>
+                           <tr>
+                               <td tal:attributes="width width">
+                                   <center>
+                                       <br>
+                                       <b>Astro Type:</b>
+                                       <tal:block tal:content="astro[1]=='0' and 'Planet' or 'Moon'"/>
+                                       <br>
+                                       <br>
+                                       <b>Terrain:</b> 
+                                       <tal:block tal:content="astro_type"/>
+                                       <br>
+                                  </center>
+                                </td>
+                                <td tal:attributes="width width">
+                                     <center>
+                                         <br>
+                                         <img src="" 
+                                              alt="Arid"
+                                              tal:attributes="src string:/static/images/${astro_type}.jpg;
+                                                              alt astro_type">
+                                             <br>
+                                     </center>
+                                 </td>
+                                 <td tal:condition="base">
+                                     <table align="center" id="base_processing-capacities">
+                                         <tbody>
+                                         <tr>
+                                             <td class="content" style="padding: 0px;">
+                                                 <table align="center" class="base_details">
+                                                     <tbody>
+                                                         <tr align="center">
+                                                             <td>Economy</td><td align="right" tal:content="base.economy">291</td><td>cred./h</td>
+                                                         </tr>
+                                                         <tr><th colspan="3"></th></tr>
+                                                         <tr align="center">
+                                                             <td>Base Owner</td>
+                                                             <td colspan="2">
+                                                                 <tal:block tal:replace="structure h.humanreadPlayerURL(base.owner)"> Owner </tal:block>
+                                                         </tr>
+                                                         <tr align="center">
+                                                             <td>Occupied by</td>
+                                                             <td colspan="2">
+                                                                  <tal:block tal:replace="structure h.humanreadPlayerURL(base.occupier)"> Occupier </tal:block>
+                                                             </td>
+                                                          </tr>
+                                                          <tr align="center">
+                                                             <td>Last scouted by</td>
+                                                             <td colspan="2">
+                                                                  <tal:block tal:replace="structure h.humanreadPlayerURL(base.updater)"> Scouter </tal:block>
+                                                             </td>
+                                                          </tr>
+                                                      </tbody>
+                                                   </table>
+                                                </td>
+                                             </tr>
+                                         </tbody>
+                                     </table>
+                                 </td>
+                             </tr>
+                         </tbody>
+                     </table>
+                </div>
+             </div>
+             <div tal:condition="python: base" align="center"
+                  class="astro_timestamp">
+                 <h2 tal:define="age python: h.humanreadAge((datetime.now() - base.timestamp))" >
+                     <b>
+                        <u tal:content="string:Basic Base &amp; Fleet information is ${age} old"> Base &amp; Fleet information is 6 days old </u>
+                     </b>
+                 </h2>
+              </div>
+              <div id="centerbody" class="astro_fleets" tal:condition="python: fleets">
+                  <table align="center" id="map_fleets">
+                      <tbody>
+                          <tr>
+                              <th class="th_header2 dropcap" style="border: 0px none;">FLEETS</th>
+                          </tr>
+                          <tr>
+                              <td class="content" style="padding: 0px;">
+                                  <table class="fleet_details sortable">
+                                      <thead>
+                                          <tr class="listing-header sorttable_header">
+                                              <th width="25%" class="sorttable_aboth">
+                                                  <a>Fleet</a>
+                                              </th>
+                                              <th width="25%" class="sorttable_aboth">
+                                                   <a>Player</a>
+                                              </th>
+                                              <th width="25%" class="sorttable_sorted_down sorttable_adown sorttable_adown">
+                                                   <a>Arrival</a>
+                                              </th>
+                                              <th width="25%" class="sorttable_desc sorttable_aboth">
+                                                   <a>Size</a>
+                                              </th>
+                                          </tr>
+                                       </thead>
+                                       <tbody>
+                                           <tal:repeater tal:repeat="fleet fleets">
+                                               <tr tal:define="guild_tag fleet.owner.guild and fleet.owner.guild.tag;
+                                                               owner_full h.humanreadPlayerURL(fleet.owner);
+                                                               size fleet.size"
+                                                   align="center"
+                                                   guild="[13th] ">
+                                                   <td>
+                                                       <a href="fleet.aspx?fleet=5193" tal:attributes="href string:/fleet/${fleet.id}">Fleet </a>
+                                                    </td>
+                                                    <td sorttable_customkey="[13th] Zane"
+                                                        tal:content="structure owner_full" tal:attributes="sorttable_customkey owner_full">
+                                                    </td>
+                                                    <td tal:define="arrivalseconds python: h.humanreadArrival(fleet.arrival, datetime.now(), fleet.timestamp)">
+                                                        <div tal:condition="arrivalseconds > 0"
+                                                             tal:content="arrivalseconds"
+                                                             tal:attributes="title arrivalseconds;
+                                                                            id string:time${repeat.fleet.index}"/>
+                                                    </td>
+                                                    <td sorttable_customkey="754100" tal:attributes="sorttable_customkey size">
+                                                        <a href="fleet.aspx?fleet=5193" tal:attributes="href string:/fleet/${fleet.id}" tal:content="size" >754100</a>
+                                                     </td>
+                                                 </tr>
+                                             </tal:repeater>
+                                         </tbody>
+                                    </table>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+
+              </div>
+              <div id="centerbody" class="blobdetails" tal:condition="python: fleets">
+                  <table>
+                  <th>Blob Details</th>
+                  <tr><td>
+                  <tal:repeater tal:repeat="guild blobdetails">
+                      <div tal:attributes="id string:blobinfo-${guild['gid']}">
+                          <table class="guild_blobdetail">
+                              <th tal:condition="guild['gid'] != -1" tal:content="string: [${guild['gtag']}] (#${guild['gid']})"> </th>
+                              <th tal:condition="guild['gid'] == -1" tal:content="string: Indies"> </th>
+                              <tr style="display:none;"   tal:attributes="class string:blobinfo-${guild['gid']}"
+                                    tal:repeat="fltrow guild['fleets']">
+                                  <td><b tal:content="fltrow[0]">Type</b></td>
+                                  <td tal:content="fltrow[1]">Quan</td>
+                              </tr>
+                              <tr><td>&nbsp;</td></tr>
+                              <tr>
+                                  <td>Total Fleet Landed</td>
+                                  <td tal:content="guild['sum']"> Fleet Sum </td>
+                              </tr>
+                          </table>
+                          <br/>
+                      </div>
+
+
+                  </tal:repeater>
+                  </td></tr>
+                  </table>
+              </div>
+
+               <div tal:condition="python: base" align="center"
+                    class="defense_timestamp ">
+                 <h2 tal:condition="base.defensetimestamp">
+                     <b tal:define="defage python: h.humanreadAge((datetime.now() - base.defensetimestamp))" >
+                        <u tal:content="string:Structural details are ${defage} old"> Base &amp; Fleet information is 6 days old </u>
+                     </b>
+                 </h2>
+              </div>
+              <div id="centerbody" class="defenses" tal:condition="python: base">
+              <table align="center" id="base_structures">
+                  <thead>
+                      <tr class="listing-header">
+                          <th>Tactical Structures</th>
+                          <th>Level</th>
+                          <th>Defenses</th>
+                          <th>Units</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                      <span tal:replace="structure h.humanreadTactical(base)" />
+                      <span tal:replace="structure h.humanreadDefenses(base)" />
+                      </tr>
+                  </tbody>
+              </table>
+               </div>
+        </tal:block>
+    </body>
+</html>
+

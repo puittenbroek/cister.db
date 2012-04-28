@@ -1,0 +1,515 @@
+from math import floor
+from math import trunc
+import time
+
+from datetime import datetime
+import random
+from sqlalchemy import func
+from sqlalchemy import select
+from webhelpers.util import update_params
+
+DEFENSE_ORDER = ["plr", "pls", "des", "dit", "pht", "iot", "plt", "mit", "lat", "ba"]
+
+DEFENSE_TRANSLATION = {"plr":"Planetary Rings",
+    "pls":"Planetary Shields",
+    "des":"Deflection Shields",
+    "dit":"Disruptor Turret",
+    "pht":"Photon Turrets",
+    "iot":"Ion Turrets",
+    "plt":"Plasma Turrets",
+    "mit":"Missile Turrets",
+    "lat":"Laser Turrets",
+    "ba":"Barracks"}
+
+def humanreadLastActivity(script, web):
+    output = ""
+    if not script and not web:
+        output = 'Nothing..'
+
+    elif script and not web:
+        output = "%s (Script)" % script
+
+    elif not script and web:
+        output = "%s (Web)" % web
+
+    elif script and web:
+        if script < web:
+            output = "%s (Script)" % script
+        else:
+            output = "%s (Web)" % web
+
+    return output
+
+
+
+
+
+def humanreadAge(delta_time, short=False):
+
+    d = delta_time.days
+    years = floor(delta_time.days / 365.25)
+    weeks = floor(delta_time.days / 7)
+    d = floor(delta_time.days % 7)
+    seconds = delta_time.seconds
+    h = floor(seconds / 3600)
+    m = floor((seconds % 3600) / 60)
+    missing = ''
+
+
+    stop = False
+
+    if short and years > 0:
+        missing = "%d %s " % (years, years > 1 and ' years' or ' year')
+        stop = True
+
+    if weeks > 0 and not stop:
+        missing = "%d %s " % (weeks, weeks > 1 and ' weeks' or ' week')
+        if short:
+            stop=True
+    if d > 0 and not stop:
+        missing = "%s%d %s " % (missing, d, d > 1 and ' days' or ' day')
+        if short:
+            stop=True
+    if weeks > 0:
+        return missing
+    if h > 0 and not stop:
+        missing = "%s%d %s " % (missing, h, h > 1 and ' hours' or ' hour')
+        if short:
+            stop=True
+    if m > 0 and not stop:
+        missing = "%s%d %s" % (missing, m, m > 1 and ' minutes' or ' minute')
+#        if short:
+#            stop=True
+    if not missing:
+        missing = "< minute"
+    return missing
+
+def humanreadDefense(defensestring):
+    defenses = defensestring.split("&")
+    if not defenses:
+        return ""
+
+    def defense_compare(x, y):
+        x = x.split("=")[0]
+        y = y.split("=")[0]
+        return DEFENSE_ORDER.index(x) - DEFENSE_ORDER.index(y)
+
+    defenses = sorted(defenses, cmp=defense_compare)
+    newstring = []
+    for defe in defenses:
+        splitted = defe.split("=")
+        newstring.append("%s %s" % (splitted[1], splitted[0]))
+
+    return ", ".join(newstring[0:2])
+
+def humanreadOwner(base):
+    output = ""
+    if base.owner.guild:
+        output = "[%s]" % base.owner_guild_tag
+
+    output = "%s %s" % (output, base.owner_name)
+    return output
+
+def humanreadPlayer(player, id=None):
+    output = ""
+    if player:
+        if player.guild:
+            output = "[%s] %s" % (player.guild.tag, player.name)
+        else:
+            output = "%s" % player.name
+    elif id and id > -1:
+        output = id
+
+    return output
+
+def humanreadPlayerURL(player):
+    output = ""
+    if player:
+        output = humanreadPlayer(player)
+        output = "<a href='/player/%s'>%s</a>" % (player.id, output)
+    return output
+
+def humanreadOccupier(base):
+    output = ""
+    if base.occupier_id == -1:
+        return output
+
+    if base.occupier_guild_id != -1:
+        output = "[%s]" % base.occupier_guild_tag
+
+    output = "%s %s" % (output, base.occupier_name)
+    return output
+
+def randomPick(list):
+    index = random.randint(0, len(list)-1)
+    return list[index]
+
+def humanreadOccupierURL(base):
+    output = humanreadOccupier(base)
+    if base.occupier_id == -1:
+        return output
+    output = "<a href='/player/%s'>%s</a>" % (base.occupier_id, output)
+    return output
+
+def humanreadScouter(base):
+    output = ""
+    if base.updater_id == -1:
+        return output
+
+    if base.updater_guild_id != -1:
+        output = "[%s]" % base.updater_guild_tag
+
+    output = "%s %s" % (output, base.updater_name)
+    return output
+
+def humanreadScouterURL(base):
+    output = humanreadScouter(base)
+    if base.updater_id == -1:
+        return output
+    output = "<a href='/player/%s'>%s</a>" % (base.updater_id, output)
+    return output
+
+def humanreadArrival(arrival, now, fleetstamp):
+    now = time.mktime(now.timetuple())
+    fleetstamp = time.mktime(fleetstamp.timetuple())
+
+    return int(arrival-(now-fleetstamp))
+
+def humanreadTactical(base):
+    tacticals = {"cc":"Command Center", "jg":"Jump Gate", "capital":"Capital"}
+    tps = []
+    lvl = []
+    for key, value in tacticals.items():
+        if hasattr(base, key) and getattr(base, key) != -1:
+            tps.append(value)
+            lvl.append("%d" % getattr(base, key))
+    output = "<td>%s</td><td>%s</td>" % ("<br/>".join(tps), "<br/>".join(lvl))
+    return output
+
+
+def humanreadDefenses(base):
+    defenses = base.defense.split("&")
+    tps = []
+    lvl = []
+    for defense in defenses:
+        defarray = defense.split("=")
+        type = defarray[0]
+        tps.append(DEFENSE_TRANSLATION.get(type))
+        lvl.append(defarray[1])
+
+    output = "<td>%s</td><td>%s</td>" % ("<br/>".join(tps), "<br/>".join(lvl))
+    return output
+
+def humanreadFleets(fleetdict):
+    output = ""
+    for key, value in fleetdict.items():
+
+        thousands = floor(value / 1000)
+        millions = floor(thousands / 1000)
+        billions = floor(millions / 1000)
+
+        if billions > 0:
+            fleetdict[key] = "%d%s " % (billions, "B")
+        elif millions > 0:
+            fleetdict[key] = "%d%s " % (millions, "M")
+        elif thousands > 0:
+            fleetdict[key] = "%d%s " % (thousands, "K")
+        else:
+            fleetdict[key] = "%d%s " % (value, "")
+    if not fleetdict:
+        output = "0 / 0 / 0"
+    else:
+        output = "%(owner)s / %(guild)s / %(other)s " % fleetdict
+    return output
+
+def twodigitNumbers(number):
+    if number < 10:
+        return "0%s" % number
+    else:
+        return "%s" % number
+
+def getAgeColorTimedelta(delta_time):
+    if not delta_time:
+        return {'class':'no-bases'}
+    seconds = delta_time.days * 86400
+    seconds = delta_time.seconds + seconds
+
+    return getAgeColor(seconds)
+
+def average(values):
+    """Computes the arithmetic mean of a list of numbers.
+    """
+    if len(values) > 0:
+        return sum(values, 0.0) / len(values)
+    else:
+        return None
+
+def getAgeColor(age):
+    w = floor(age / 604800)
+    d = floor((age % 604800) / 86400)
+    returnV = {}
+    if w >= 20:
+        ##5+ month
+        returnV["color"] = "rgb(255,0,0)"
+        returnV['class'] = "rgb5month"
+        returnV['label'] = "5+ months"
+
+    elif w < 20 and w >= 16:
+        ##4-5 month
+        returnV["color"] = "rgb(255,51,0)"
+#        returnV['class'] = "4-5months"
+        returnV['label'] = "4-5 months"
+    elif w < 16 and w >= 12:
+        ##3-4 month.
+        returnV["color"] = "rgb(255,102,0)"
+    #        returnV['class'] = "3-4months"
+        returnV['label'] = "3-4 months"
+    elif w < 12 and w >= 8:
+        ##2-3 month
+        returnV["color"] = "rgb(255,153,0)"
+    #        returnV['class'] = "2-3months"
+        returnV['label'] = "2-3 months"
+
+    elif w < 8 and w >= 4:
+        ##1-2 month
+        returnV["color"] = "rgb(255,204,0)"
+    #        returnV['class'] = "1-2months"
+        returnV['label'] = "1-2 months"
+
+    elif w < 4 and w >= 2:
+        ##2-4 weeks
+        returnV["color"] = "rgb(204,255,0)"
+    #        returnV['class'] = "2-4weeks"
+        returnV['label'] = "2-4 weeks"
+
+    elif w < 2 and w >= 1:
+        ##1-2 weeks
+        returnV["color"] = "rgb(153,255,0)"
+    #        returnV['class'] = "1-2weeks"
+        returnV['label'] = "1-2 weeks"
+
+    elif w < 1 and d >= 3:
+        ##3-7 days
+        returnV["color"] = "rgb(102,255,0)"
+    #        returnV['class'] = "3-7days"
+        returnV['label'] = "3-7 days"
+
+    elif d < 3 and d >= 1:
+        ##1-3 days
+        returnV["color"] = "rgb(51,255,0)"
+    #        returnV['class'] = "1-3days"
+        returnV['label'] = "1-3 days"
+    elif d == 0:
+        ##<1 day
+        returnV["color"] = "rgb(0,255,0)"
+        returnV['class'] = "rgb1day"
+        returnV['label'] = "<1 day"
+
+    if not returnV:
+        import pdb; pdb.set_trace()
+
+    if not returnV.has_key('class'):
+        returnV['class'] = "rgb%s" % returnV['label'].replace(" ", "")
+
+    return returnV
+
+
+def makeStyling(legenda, region=False):
+    output = ""
+    for leg in legenda:
+        if region:
+            output += """
+            img.%(class)s {
+                border: solid 1px %(color)s;
+            }
+            """ % leg
+        else:
+            output += """
+            td.%(class)s {
+                background: %(color)s;
+                opacity: 0.2;
+            }
+            """ % leg
+
+    return output
+
+def maxPostPages(navigation):
+    max = navigation.page + 6
+    if max > navigation.last_page + 1:
+        max = navigation.last_page + 1
+    return max
+
+def getAgeLegenda():
+    legenda = []
+    legenda.append(getAgeColor(86200))
+    legenda.append(getAgeColor(86400 * 2))
+    legenda.append(getAgeColor(86400 * 4))
+    legenda.append(getAgeColor(684800))
+    legenda.append(getAgeColor(604800 * 3))
+    legenda.append(getAgeColor(604800 * 5))
+    legenda.append(getAgeColor(604800 * 8))
+    legenda.append(getAgeColor(604800 * 14))
+    legenda.append(getAgeColor(604800 * 22))
+    legenda.append({"label":'no known bases', "class":"no-bases", "color":"rgb(0,0,255)"})
+    return legenda
+
+def getCountLegenda(min=1, max=18, single='base', plural='bases'):
+    if not max:
+        return []
+    interval = ((max-min) / 10)
+    if not interval:
+        interval = 1
+    i = 1
+    legenda = []
+    while (i < 10 and i * interval < max + 1):
+        legenda.append(getCountColor(interval * i, min, max, single, plural))
+        i += 1
+    if not i < 10:
+        legenda.append(getCountColor(interval * i + 1, min, max, single, plural))
+    return legenda
+
+def getCountColor(count, min=1, max=18, single='base', plural='bases'):
+    returnV = {}
+    colors = []
+    colors.append("rgb(255,0,0)")
+    colors.append("rgb(255,51,0)")
+    colors.append("rgb(255,102,0)")
+    colors.append("rgb(255,153,0)")
+    colors.append("rgb(255,204,0)")
+    colors.append("rgb(204,255,0)")
+    colors.append("rgb(153,255,0)")
+    colors.append("rgb(102,255,0)")
+    colors.append("rgb(51,255,0)")
+    colors.append("rgb(0,255,0)")
+    colors.reverse()
+
+    if not max:
+        return returnV
+    interval = ((max-min) / 10)
+    interval = trunc(interval)
+    if not interval:
+        interval = 1
+
+
+    i = 0
+    while (i < 9 and interval * i < (max + 1)):
+        
+        if (count <= interval * (i + 1) and count >= interval * i) or interval * (i + 1) > (max):
+            if count <= interval * (i + 1) and count >= interval * i:
+                returnV["color"] = colors[i]
+                low = (interval * i == 0 and 1 or interval * i)
+                if interval == 1:
+                    returnV['class'] = "rgb%d%s" % (interval * (i + 1), single)
+                    returnV['label'] = "%d %s" % (interval * (i + 1), single)
+                else:
+                    returnV['class'] = "rgb%s%s%s" % (low, interval * (i + 1), plural)
+                    returnV['label'] = "%d-%d %s" % (low, interval * (i + 1), plural)
+                break
+            else:
+                returnV["color"] = colors[i]
+                if interval == 1:
+                    returnV['class'] = "rgb%d%s" % (max, single)
+                    returnV['label'] = "%s %s" % (max, single)
+                else:
+                    returnV['class'] = "rgb%d%d%s" % (interval * i, max, plural)
+                    returnV['label'] = "%d-%d %s" % (interval * i, max, plural)
+               
+                break
+        i += 1
+    if not returnV:
+        returnV["color"] = colors[9]
+        returnV['class'] = "rgb%dp%s" % (interval * (i), plural)
+        returnV['label'] = "%d+ %s" % (interval * (i), plural)
+    return returnV
+
+def getFleetLink(fleet, grouper, locationlength, request):
+    #                ('owner-01','Location, Owner'),
+    #                ('owner-01','Galaxy, Owner'),
+    #                ('owner-02','Galaxy-Group, Owner')
+    #                ('blob-01','Location, Guild'),
+    #                ('blob-02','Galaxy, Guild'),
+    #                ('blob-03','Galaxy-Group, Guild'),
+    if not grouper:
+        return "fleet/%d" % fleet.id
+    idtag = '[-1]'
+    newgrouper = ''
+    location = fleet.location[0:locationlength]
+    if 'blob' in grouper:
+        if fleet.owner_guild_member_guildid != -1:
+            idtag = "[%s]" % fleet.owner_guild_tag
+
+        if grouper == 'blob-03':
+            newgrouper = 'blob-02'
+        elif grouper == 'blob-02':
+            newgrouper = 'blob-01'
+            location = fleet.location[0:3]
+        elif grouper == 'blob-01':
+            newgrouper = ''
+            location = fleet.location
+
+        if fleet.owner_guild_member_guildid == -1 and grouper == 'blob-02':
+            newgrouper = ''
+
+        new_url = update_params(request.url, group_by=newgrouper, owner=idtag, location=location)
+        return new_url
+
+
+def minimizeSplit(txttosplit):
+    result = txttosplit.split(" ")
+    returnV = result[0][0:2]
+    if len(result) > 1:
+        returnV = "%s%s" % (returnV, result[1][0:1])
+    return returnV.lower()
+
+
+def getUnitArray():
+    abbUnitNames = {}
+    fullUnitNames = ['Fighters', 'Bombers', 'Heavy Bombers', 'Ion Bombers', 'Corvette', 'Recycler', 'Destroyer', 'Frigate', 'Ion Frigate', 'Scout Ship', 'Outpost Ship', 'Cruiser', 'Carrier', 'Heavy Cruiser', 'Battleship', 'Fleet Carrier', 'Dreadnought', 'Titan', 'Leviathan', 'Death Star']
+    for name in fullUnitNames:
+        if minimizeSplit(name) == 'le':
+            abbUnitNames['lev'] = name
+        abbUnitNames[minimizeSplit(name)] = name
+
+    return abbUnitNames
+
+def dictFleetDetails(detailstring):
+    details = []
+    lookup = getUnitArray()
+    parts = detailstring.split("&")
+    for p in parts:
+        type, quan = p.split("=")
+        details.append((lookup.get(type, type),quan))
+    return details
+
+def createBlobDetails(location, fleets):
+    data = {}
+    fullUnitNames = ['Fighters', 'Bombers', 'Heavy Bombers', 'Ion Bombers', 'Corvette', 'Recycler', 'Destroyer', 'Frigate', 'Ion Frigate', 'Scout Ship', 'Outpost Ship', 'Cruiser', 'Carrier', 'Heavy Cruiser', 'Battleship', 'Fleet Carrier', 'Dreadnought', 'Titan', 'Leviathan', 'Death Star']
+    def fleet_compare(x, y):
+        x = x[0]
+        y = y[0]
+        return fullUnitNames.index(x) - fullUnitNames.index(y)
+
+    for fleet in fleets:
+        arrivalseconds = humanreadArrival(fleet.arrival, datetime.now(), fleet.timestamp)
+        if arrivalseconds < 0 and fleet.details and len(fleet.details) > 2:
+            gid = fleet.owner.guild and fleet.owner.guild.id or -1
+            current_guild_data = data.get(gid, {})
+            details = dictFleetDetails(fleet.details)
+            current_fleets = current_guild_data.get("fleets",{})
+            for type, quan in details:
+                current_fleets[type] = current_fleets.get(type,0) + int(quan)
+
+            current_guild_data['gid'] = gid
+            current_guild_data['gtag'] = fleet.owner.guild and fleet.owner.guild.tag or ''
+            current_guild_data['fleets'] = current_fleets
+            current_guild_data['sum'] = current_guild_data.get('sum',0)+ fleet.size
+            data[gid] = current_guild_data
+            
+    for guild, values in data.items():
+        guild_fleets = values['fleets']
+        new_fleets = guild_fleets.items()
+        new_fleets = sorted(new_fleets, cmp=fleet_compare)
+        data[guild]['fleets'] = new_fleets
+
+    return data;
+

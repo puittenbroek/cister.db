@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+         <title tal:content="string:Cister - Region - ${location}">Cister - Region</title>
+
+         <style type="text/css" tal:content="h.makeStyling(legenda, region=True)" />
+    </tal:meta>
+     <tal:scripts metal:fill-slot="script_slot">
+         <script type="text/javascript">
+             $(document).ready(function() {
+             $('.legenda_table td').hover(
+            function(){
+                $(this).parent().addClass("highlight");
+                $("."+$(this).attr("highlight")).addClass("highlight");},
+            function(){
+                $("."+$(this).attr("highlight")).removeClass("highlight");
+                $(this).parent().removeClass("highlight");
+                });
+             });
+          </script>
+          <script src="${request.static_url('cister:static/region.js')}" type="text/javascript"></script>
+     </tal:scripts>
+    <body metal:fill-slot="content" >
+            <tal:block metal:use-macro="generic_macros.macros['map_info_links']" />
+        <div id="centerbody" class="map region_view">
+            <table id="region">
+                <tbody>
+                    <tr tal:repeat="row systems.keys()">
+                        <td tal:repeat="col systems[row].keys()">
+                            <div class="system"
+                                 tal:define="system_location string:A${galaxy}:${region}:${row}${col};
+                                             color_dict systems[row][col]['base_age'];
+                                             astros systems[row][col]['astro_count'];
+                                             bases systems[row][col]['base_count'];
+                                             age color_dict.get('label', '');
+                                             age python: age and label and '%s: %s' % (label,age) or '';
+                                             the_class astros > 0 and color_dict.get('class','no-bases') or '';
+                                             the_loc systems[row][col]['astro_count']>0 and system_location or None;"
+                                 tal:attributes="class string:system system_${system_location}"
+                                 >
+                            <tal:block tal:condition="python: not astros" >
+                                &nbsp;
+                            </tal:block>
+                            <tal:block tal:condition="python: astros>0" >
+                                <a href="" tal:attributes="href string:/map/${system_location}">
+                                    <span tal:content="string:${system_location}"/>
+                                    <img height="24" width="24" src="" alt="Star" 
+                                        tal:attributes="src python: '/static/images/stars/%s' % h.randomPick(stars);
+                                                        class python: the_class;
+                                                        system the_loc" />
+                                </a>
+                                <small tal:content="string: Astros: ${astros}"/>
+                                <small tal:content="string: Bases ${bases}"/>
+                                
+                            </tal:block>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="filter_wrapper">
+                <div class="filters" id="cis_base_filters" >
+                    <form action="" method="GET">
+                     <div id="filters"
+                        tal:define="default_search python: 'Base Search';
+                                    filters base_filters;">
+                        <tal metal:use-macro="generic_macros.macros['search_filters']" />
+                     </div>
+                     <div class="buttons">
+                         <input name="form.base_submitted" type="submit" value="Search" />
+                         <a class="button" href="" tal:attributes="href request.url.split('?')[0]">Clear Search</a>
+                     </div>
+                    </form>
+                     <div class="clearer">&nbsp;</div>
+                </div>
+
+                <div class="filters" id="cis_fleet_filters" >
+                    <form action="" method="GET">
+                     <div id="filters"
+                        tal:define="default_search python: 'Fleet Search';
+                                    filters fleet_filters;">
+                        <tal metal:use-macro="generic_macros.macros['search_filters']" />
+                     </div>
+                     <div class="buttons">
+                         <input name="form.fleet_submitted" type="submit" value="Search" />
+                         <a class="button" href="" tal:attributes="href request.url.split('?')[0]">Clear Search</a>
+                     </div>
+                    </form>
+                     <div class="clearer">&nbsp;</div>
+                </div>
+            </div>
+            <div id="legenda" tal:condition="not: legenda">
+                No results have been found
+            </div>
+            <div id="legenda" tal:condition="legenda">
+                <table class="legenda_table">
+                    <thead>
+                        <tr>
+                            <th>Age</th>
+                            <th>Color</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr tal:repeat="row legenda">
+                            <td class="label"
+                                tal:content="row.get('label')"
+                                tal:attributes="highlight row.get('class');">
+                                Label
+                            </td>
+                            <td class="value"
+                                tal:attributes="style string: background:${row.get('color')};
+                                                highlight row.get('class');">
+                                &nbsp;
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <tal:block tal:define="navigation bases" metal:use-macro="base_search.macros['base_search_result']" />
+            <div class="clearer">&nbsp;</div>
+
+        </div>
+    </body>
+</html>
+

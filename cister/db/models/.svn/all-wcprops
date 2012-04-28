@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/cister/!svn/ver/2/trunk/cister/models
+END
+cister.py
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/cister/!svn/ver/8/trunk/cister/models/cister.py
+END
+CISBase.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/cister/!svn/ver/8/trunk/cister/models/CISBase.py
+END
+CISNews.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/cister/!svn/ver/8/trunk/cister/models/CISNews.py
+END
+CISUser.py
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/cister/!svn/ver/8/trunk/cister/models/CISUser.py
+END
+CISFleet.py
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/cister/!svn/ver/8/trunk/cister/models/CISFleet.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/cister/!svn/ver/8/trunk/cister/models/__init__.py
+END
+CISGuild.py
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/cister/!svn/ver/8/trunk/cister/models/CISGuild.py
+END
+CISLocation.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/cister/!svn/ver/8/trunk/cister/models/CISLocation.py
+END

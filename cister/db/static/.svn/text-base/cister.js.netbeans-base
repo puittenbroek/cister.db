@@ -1,0 +1,13 @@
+$(document).ready(function() {
+
+    $("#cis_base_filters a").click(function(){
+        $.cookie('search', '',{
+            path:'/'
+        });
+    });
+    $("#cis_fleet_filters a").click(function(){
+        $.cookie('search', '',{
+            path:'/'
+        });
+    });
+});

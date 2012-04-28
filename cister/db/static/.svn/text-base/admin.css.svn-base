@@ -1,0 +1,16 @@
+#main_navigation.navigation li.admin {
+    float: right;
+}
+
+.deactivate {
+    background-color: blue;
+}
+
+.ban {
+    background-color: orange;
+}
+
+.delete {
+    background-color: red;
+
+}

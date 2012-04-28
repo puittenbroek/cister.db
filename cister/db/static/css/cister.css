@@ -1,0 +1,456 @@
+body {
+    background-attachment: fixed;
+    background-color: #000000;
+    background-image: url("/static/images/stars2.jpg");
+    background-position: left top;
+    background-repeat: no-repeat;
+    color: #FFFFFF;
+    font: 12px verdana,arial;
+}
+body h1 {
+    color: white;
+}
+a {
+    color: #F3EC84;
+}
+
+b {
+    font-weight: bold;
+}
+
+th {
+    color: gold;
+}
+body h2, body h3  {
+    color:white;
+}
+input, .button {
+    background-color: #212121;
+    border: 1px solid #3B3B3B;
+    color: #FFFFFF;
+    font: bold 11px verdana,arial;
+}
+.buttons .button {
+    padding: 0.1em 0.8em;
+    margin-left:1em;
+    display: block;
+    float: left;
+}
+.buttons input {
+    display: block;
+    float: left;
+}
+.buttons {
+    padding-top: 0.5em;
+    padding-left: 1em;
+    display: block;
+    clear: both;
+}
+.message {
+    color: red;
+    font-weight:bold;
+    padding-bottom:1em;
+}
+small {
+    font-size: 0.7em;
+}
+
+select, select option {
+    background-color: #212121;
+    border: 1px solid #3B3B3B;
+    color: #FFFFFF;
+    font: bold 10px verdana,arial;
+}
+
+#base_info, fleet_info {
+    padding: 5px;
+}
+
+#base_structures {
+    width: 100%;
+}
+
+#cis_bases td, #cis_bases th, #field_filters, #cis_fleets td, #cis_fleets th{
+    padding-left: 1em;
+}
+
+#navigation, #main_navigation {
+    margin-bottom: 1em;
+}
+#main_navigation, #centerbody {
+    background-color: #1D1D1D;
+    background-repeat: repeat-x;
+    border: 2px solid #272727;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#main_info{
+    background-color: #1D1D1D;
+    background-image: url("/static/images/grad2.jpg");
+    background-repeat: repeat-x;
+}
+
+#base_processing-capacities{
+    width: 250px;
+}
+#system_view {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+#system_view a {
+    font-size: 0.8em;
+}
+
+#system_view td {
+    vertical-align:baseline;
+}
+
+#system_view span {
+    display:block;
+}
+
+#map_fleets {
+    width: 100%;
+    margin-bottom: 0.2em;
+}
+
+#region {
+    width: 600px;
+    height: 600px;
+    background-color: #1D1D1D;
+    background-image: url("/static/images/grad2.jpg");
+    background-repeat: repeat;
+    border: 1px solid #272727;
+    float: left;
+}
+#region td {
+    width: 10%;
+}
+#region tr {
+    height: 10%;
+}
+
+#map_fleets td {
+    border: 0;
+}
+#cis_bases_result{
+    clear:both;
+}
+
+#filters {
+    float:left
+}
+
+#field_filters {
+    float:left
+
+}
+div#centerbody.region_view #cis_bases_result,
+div#centerbody.region_view #cis_fleet_filters,
+div#centerbody.region_view #cis_base_filters,
+div#centerbody.region_view #legenda,
+div#centerbody.galaxy_view #cis_bases_result,
+div#centerbody.galaxy_view #cis_fleet_filters,
+div#centerbody.galaxy_view #cis_base_filters,
+div#centerbody.galaxy_view #legenda {
+    display: block;
+    float: left;
+    margin-left: 1em;
+    margin-top: 0;
+    background-color: #1D1D1D;
+    background-image: url("/static/images/grad.jpg");
+    background-repeat: repeat-x;
+    border: 1px solid #272727;
+}
+div#centerbody.region_view #cis_base_filters ,
+div#centerbody.galaxy_view #cis_base_filters {
+    margin-bottom: 1em;
+    float: none;
+}
+div#centerbody.region_view #cis_fleet_filters,
+div#centerbody.galaxy_view #cis_fleet_filters {
+    float: none;
+    padding-top: 1em;
+}
+
+div#centerbody.region_view #base_navigation,
+div#centerbody.galaxy_view #base_navigation{
+    display: none;
+}
+div#centerbody.region_view #cis_bases_result,
+div#centerbody.galaxy_view #cis_bases_result{
+    clear: none;
+    height: 600px;
+    overflow: auto;
+    width: 350px;
+}
+
+div#centerbody.galaxy_view #legenda {
+    display: block;
+}
+
+#legenda {
+    min-width: 100px;
+    float: left;
+    margin-left: 1em;
+    margin-top: 1em;
+    background-color: #1D1D1D;
+    background-image: url("/static/images/grad.jpg");
+    background-repeat: repeat-x;
+    border: 1px solid #272727;
+}
+#legenda .legenda_table{
+    width: 100%;
+}
+#legenda .legenda_table th {
+    color: white;
+}
+#legenda .legenda_table td {
+    border: 1px solid #212121;
+}
+
+#legenda .legenda_table td.value {
+    width: 50px;
+}
+.td_reg .highlight, #galaxy td.highlight{
+    background: white !important;
+    opacity: 0.4;
+}
+#region .highlight, #legenda .highlight {
+border: 2px solid white !important;
+}
+
+#galaxies-links a {
+}
+#popup-galaxy #centerbody {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+#popup-galaxy #galaxy{
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+}
+
+#galaxy {
+    float: left;
+    width: 600px;
+    height: 600px;
+    border: 1px solid #272727;
+    background-size: 600px;
+}
+#galaxy td{
+    width: 10%;
+    height: 10%;
+}
+#galaxy td a {
+    display: block;
+    margin: 0;
+    padding: 0;
+    line-height:0;
+}
+#galaxy td #region_internal{
+    width: 60px;
+    height: 60px;
+}
+#galaxy td a img {
+    width: 100%;
+    height: 100%;
+}
+
+div#centerbody.system_view {
+    width: 60%;
+    background-color: #1D1D1D;
+    background-image: url("/static/images/grad2.jpg");
+    background-repeat: repeat-x;
+}
+div#centerbody.defenses, div#centerbody.fleetinfo {
+    width: 60%;
+}
+div#centerbody.fleetdetails {
+    width: 200px;
+    margin-top:1em;
+}
+div#centerbody.region_view {
+    width: 80%;
+    height: 100%;
+    background: none;
+    border: none;
+    margin-left: 10%;
+}
+div#centerbody.galaxy_view {
+    width: 85%;
+    height: 100%;
+    background: none;
+    border: none;
+    margin-left: 10%;
+}
+
+div#centerbody.overview {
+    background-image: url('');
+    background-color:transparent;
+    border: none;
+}
+
+div#centerbody.astro_fleets {
+    background-image: url('');
+    background-color:transparent;
+    border: none;
+    }
+
+div#centerbody.astro_fleets th a {
+    color: white;
+}
+div#centerbody.blobdetails {
+    float: left;
+    margin-left: 20px;
+    width: 40%;
+}
+div#centerbody.blobdetails table {
+    width:60%;
+}
+div#centerbody.blobdetails td {
+    width: 50%;
+}
+#map_fleets {
+    float: left;
+    width: 40%;
+    background-color: #1D1D1D;
+    background-repeat: repeat-x;
+}
+#base_info table, #fleet_info table{
+    width:100%;
+}
+#base_info th, #fleet_info th {
+color: white;
+}
+#base_info th{
+    width:50%;
+}
+#fleet_info th {
+    width: 20%;
+}
+#filter_wrapper {
+    float: left;
+}
+.login form{
+    padding: 1em
+}
+
+.gal_bases_age {
+    color: black;
+}
+.galaxy_overview {
+    float: left;
+    margin-bottom: 20px;
+    margin-right: 20px;
+    width: 20%;
+   background-color: #1D1D1D;
+    background-repeat: repeat-x;
+    border: 2px solid #272727;
+    border-collapse: collapse;
+    text-align:center
+}
+.galaxy_overview th {
+    width: 25%;
+}
+.grey_text {
+    color: grey;
+}
+.clearer {
+    clear:both;
+}
+.astro {
+    width: 120px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2em;
+    height: 100px
+}
+.astro span, .astro small,  .astro a, .system span, .system astro{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    text-align: center;
+    font-size:0.8em;
+}
+.system small {
+    line-height: 0.9em;
+    font-size:0.7em;
+    display:block;
+}
+.astro img{
+    margin-bottom:0.2em;
+}
+
+.navigation ul li, #base_navigation ul li{
+    display: inline;
+    width: auto;
+}
+.navigation ul li a {
+    padding: 2px 3px;
+    font:  bold 14px verdana,arial
+}
+.no_back, .base_details {
+    background-color: #1D1D1D;
+    background-repeat: repeat-x;
+}
+
+.filters, #cis_bases_result {
+    padding: 5px;
+}
+.filters td.filter_value {
+    padding-left:10px;
+}
+.filters input[type='submit']{
+    clear:both;
+    display:block;
+}
+.base_details, .fleet_details {
+    width: 100%;
+}
+.base_details, .base_details td, .content {
+    border: 1px  solid #272727;
+}
+
+
+.astro_timestamp u, .defense_timestamp u{
+    color: gold;
+}
+
+.map, .defense_timestamp {
+    margin-top: 1em;
+    clear: both;
+}
+
+.age {
+    color:yellow;
+}
+
+.defenses th, #fleetdetails_table th.blank {
+    width: 25%;
+    color: white;
+}
+.defenses td {
+    width: 25%;
+    text-align:center;
+}
+.fleetdetails th {
+    width: 50%;
+}
+#fleetdetails_table {
+    width:100%;
+}
+.fleetsum {
+    font-size: 0.5em;
+}
+.warning th {
+    color: red;
+}
+

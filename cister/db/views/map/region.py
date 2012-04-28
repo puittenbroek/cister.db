@@ -1,0 +1,45 @@
+from cister.db.models.cister import DBSession
+from datetime import datetime
+from cister.db.helpers import getAgeLegenda
+import time
+import os
+from cister.db.views import BaseCisterView
+from cister.db.views.map.generic import makeLocationDict
+from cister.db.views.map.galaxy import GalaxyView
+
+class RegionView(GalaxyView):
+
+    def __call__(self):
+        dbsession = DBSession()
+        location = "A"
+        location = "%s%s" % (location, self.request.matchdict.get("galaxy"))
+        location = "%s:%s" % (location, self.request.matchdict.get("region"))
+        bases = None
+        params = {}
+        if "form.base_submitted" in self.request.params or self.request.cookies.get('search','') == 'base':
+            systems = makeLocationDict(dbsession, location, 1, 9, 7, 8, do_base=False)
+            if self.request.cookies.get('search','') == 'base':
+                params = self.request.cookies
+            else:
+                params = self.request.params
+            bases, legenda, systems = self.processBase(dbsession,params, systems, location,  1, 9)
+            
+            label = ''
+        else:
+            systems = makeLocationDict(dbsession, location, 1, 9, 7, 8)
+            legenda = getAgeLegenda()
+            label = 'Avg. age'
+        stars = ['bluegiant.jpg','blue.jpg','neutron.jpg','orange.jpg','redgiant.jpg','red.jpg','supergiant.jpg','whitedwarf.jpg','white.jpg','yellow.jpg'] 
+
+        returnvalue = {'base_filters': self.basefilters,
+                       'fleet_filters': self.fleetfilters,
+                       'location':location,
+                        'legenda':legenda,
+                        'params': params,
+                       'stars':stars,
+                       'label':label,
+                       'systems': systems,
+                       'bases':bases,
+                       'datetime':datetime}
+        returnvalue.update(self.request.matchdict)
+        return returnvalue

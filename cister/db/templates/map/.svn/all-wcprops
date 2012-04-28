@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/cister/!svn/ver/2/trunk/cister/templates/map
+END
+map.pt
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/cister/!svn/ver/2/trunk/cister/templates/map/map.pt
+END
+region.pt
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/cister/!svn/ver/2/trunk/cister/templates/map/region.pt
+END
+system.pt
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/cister/!svn/ver/8/trunk/cister/templates/map/system.pt
+END
+galaxy.pt
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/cister/!svn/ver/2/trunk/cister/templates/map/galaxy.pt
+END
+galaxy-popup.pt
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/cister/!svn/ver/2/trunk/cister/templates/map/galaxy-popup.pt
+END
+astro.pt
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/cister/!svn/ver/8/trunk/cister/templates/map/astro.pt
+END

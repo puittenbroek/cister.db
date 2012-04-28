@@ -1,0 +1,31 @@
+from cister.models.cister import DetailedBase
+from cister.models.cister import DetailedFleet
+from cister.models.cister import Location
+from cister.models.cister import DBSession
+from datetime import datetime
+from cister.views import BaseCisterView
+
+
+
+class AstroView(BaseCisterView):
+
+    def __call__(self):
+        dbsession = DBSession()
+        location = "A"
+        location = "%s%s" % (location, self.request.matchdict.get("galaxy"))
+        location = "%s:%s" % (location, self.request.matchdict.get("region"))
+        location = "%s:%s" % (location, self.request.matchdict.get("system"))
+        location = "%s:%s" % (location, self.request.matchdict.get("astro"))
+
+        astro = dbsession.query(Location).filter(Location.location==location).one()
+        try:
+            base = dbsession.query(DetailedBase).filter(DetailedBase.location==location).one()
+        except:
+            base = None
+        fleets = dbsession.query(DetailedFleet).filter(DetailedFleet.location==location)
+        fleets = fleets.order_by("arrival-(unix_timestamp(now())-unix_timestamp(fleet.timestamp)) > 0 ASC, arrival ASC, size DESC")
+        if fleets.count() == 0:
+            fleets = None
+        returnvalue = {'location':location, 'terrain':astro, 'base':base, 'fleets':fleets, 'datetime':datetime}
+        returnvalue.update(self.request.matchdict)
+        return returnvalue

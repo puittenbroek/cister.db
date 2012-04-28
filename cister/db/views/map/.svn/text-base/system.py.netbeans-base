@@ -1,0 +1,73 @@
+from cister.models.cister import DetailedBase
+from cister.models.cister import DetailedFleet
+from cister.models.cister import Location
+from cister.models.cister import DBSession
+from datetime import datetime
+from cister.views import BaseCisterView
+
+class SystemView(BaseCisterView):
+
+    def __call__(self):
+        dbsession = DBSession()
+        location = "A"
+        location = "%s%s" % (location, self.request.matchdict.get("galaxy"))
+        location = "%s:%s" % (location, self.request.matchdict.get("region"))
+        location = "%s:%s" % (location, self.request.matchdict.get("system"))
+
+        astros = dbsession.query(Location).filter(Location.location.like("%s%%"%location))
+        bases = dbsession.query(DetailedBase).filter(DetailedBase.location.like("%s%%"%location))
+        locationdetail = {}
+        fleetlocations = []
+        for base in bases:
+            locationdetail[base.location] = { "owner_id":base.owner_id, "owner_guild_id":base.owner_guild_id}
+
+        astrocolumns = 0
+        for astro in astros:
+            fleetlocations.append(astro.location)
+            if int(astro.location[10]) > astrocolumns:
+                astrocolumns = int(astro.location[10])
+
+        fleets = dbsession.query(DetailedFleet).filter(DetailedFleet.location.in_(fleetlocations))
+        fleetstrings = {}
+
+        for fleet in fleets:
+            locdetail = locationdetail.get(fleet.location, {})
+            fleetdetail = fleetstrings.get(fleet.location, {"owner":0, "guild":0, "other":0})
+            if fleet.owner_id == locdetail.get("owner_id", -1000):
+                fleetdetail['owner'] = fleetdetail.get('owner',0) + fleet.size
+            elif fleet.owner_guild_id == locdetail.get("owner_guild_id", -1000):
+                fleetdetail['guild'] = fleetdetail.get('guild',0) + fleet.size
+            else:
+                fleetdetail['other'] = fleetdetail.get('other',0) + fleet.size
+            fleetstrings[fleet.location] = fleetdetail
+
+        locations = {}
+        for astro in astros:
+            locations[astro.location] = {'location':astro.location,
+                                         'terrain':astro.terrainname,
+                                         'size': astro.location[11]=='0' and '50' or '30',
+                                         'base':None,
+                                         'fleets': []}
+            if astro.terrainname == 'Asteroid':
+                locations[astro.location]['size'] = 20;
+
+
+        for base in bases:
+            locations[base.location]['base'] = base
+
+        for fleet in fleets:
+            locations[fleet.location]['fleets'].append(fleet)
+
+        locations = locations.values()
+        locations = sorted(locations, key= lambda k: k['location'])
+
+        returnvalue = {'location':location,
+                       'columns':astrocolumns,
+                       'locations':locations,
+                       'astros':astros,
+                       'fleets':fleetstrings,
+                       'datetime':datetime}
+        returnvalue.update(self.request.matchdict)
+#        import pdb;pdb.set_trace()
+
+        return returnvalue

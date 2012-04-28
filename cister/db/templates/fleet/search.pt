@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <head>
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+    <title>Cister - Fleet Search</title>
+    <script tal:condition="fleets" type="text/javascript">
+        var start_date = (new Date).getTime();
+        var q = 0;
+
+        function t()
+        {
+            for(n=0;n<=q;n++)
+            {
+                now = (new Date).getTime();
+                elem=document.getElementById('time'+n);
+                if (elem) {
+                    m = 0;
+                    h = 0;
+                    var diff = (now - start_date) / 1000;
+                    s = elem.title - diff;
+
+                    if (s >= 1) {
+                        h = Math.floor(s / 3600);
+                        m = Math.floor((s % 3600) / 60);
+                        s = Math.floor((s % 60));
+                        elem.innerHTML = h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+                    }
+                    else {
+                        elem.innerHTML = '-';
+                    }
+                }
+            }
+        }
+        setInterval('t();', 200);1
+    </script>
+     <script tal:condition="fleets" type="text/javascript" tal:content="string: q=${fleets.item_count}">
+     </script>
+    </tal:meta>
+
+    </head>
+    <body>
+        <tal:block metal:fill-slot="content" tal:define="navigation fleets">
+          <div id="centerbody">
+            <div class="filters" id="cis_fleet_filters" >
+                <form action="" method="GET">
+                 <div tal:condition="python: filters" id="filters">
+                    <tal metal:use-macro="generic_macros.macros['search_filters']" />
+                 </div>
+                 <div tal:condition="python: fieldfilters" id="field_filters">
+                    <tal metal:use-macro="generic_macros.macros['field_filters']" />
+                 </div>
+                 <input name="form.submitted" type="submit" value="Search" />
+                </form>
+            </div>
+            <div id="cis_fleets_result" tal:condition="fleets">
+                <div id="fleet_navigation" class="navigation">
+
+                    <tal metal:use-macro="generic_macros.macros['navigation']" />
+                </div>
+                <table id="cis_fleets">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Owner</th>
+                            <th>Size</th>
+                            <th tal:condition="not grouper">Arrival</th>
+                            <th tal:condition="python: request.params.has_key('show_lsd')">
+                                <tal:block tal:condition="grouper">Average</tal:block> Age of Fleet
+                            </th>
+
+                            <th tal:condition="python: request.params.has_key('show_lsdd')">
+                                <tal:block tal:condition="grouper">Average</tal:block> Age of Detail
+                            </th>
+
+                            <th tal:condition="python: request.params.has_key('show_lsp')">Last Scouter</th>
+                        </tr>
+                    </thead>
+                    <tr tal:repeat="fleettuple fleets">
+                        <tal:block tal:define="fleet python:fleettuple[0]">
+                        <td class="location">
+                            <a href="#"
+                                tal:attributes="href h.getFleetLink(fleet, grouper, locationlength, request)"
+                            tal:content="python: fleet.location[0:locationlength]">Loc</a></td>
+                        <td class="owner" align="center">
+                            <tal:fullowner tal:condition="python: fleet.ownerid and 'blob' not in grouper">
+                                <tal:tag tal:condition="python: fleet.owner.guild  and fleet.owner.guild.id">
+                                    [<span tal:replace="fleet.owner.guild.tag"/>]
+                                </tal:tag>
+                                <tal:name tal:replace="python: fleet.owner.name">Owername
+                                </tal:name>
+                            </tal:fullowner>
+                            <tal:guildowner tal:condition="python: fleet.ownerid and 'blob' in grouper">
+                                <tal:tag tal:condition="python: fleet.owner.guild">
+                                    [<span tal:replace="fleet.owner.guild.tag"/>]
+                                </tal:tag>
+                                <tal:tag tal:condition="python: not fleet.owner.guild and grouper">
+                                    Indy/UC/Drekon
+                                </tal:tag>
+                            </tal:guildowner>
+                            
+
+                        </td>
+                        <td align="center" class="size">
+                            <div tal:condition="python: fleet.size != -1"
+                                 tal:replace="python: fleettuple[1]" />
+                        </td>
+                        <td tal:condition="not grouper" align="center" class="arrival" >
+                            <div tal:condition="fleet.arrival" 
+                                tal:define="arrivalseconds python: fleettuple[4]"
+                                tal:content="arrivalseconds"
+                                tal:attributes="title arrivalseconds;
+                                                id string:time${repeat.fleettuple.index}"/>
+                        </td>
+                        <td align="center" class="fleet_timestamp"  tal:condition="python: request.params.has_key('show_lsd')">
+                            <div tal:condition="fleet.timestamp" tal:replace="python: h.humanreadAge((datetime.now() - fleettuple[2]))" />
+                        </td>
+                         <td align="center" class="detail_timestamp"  tal:condition="python: request.params.has_key('show_lsdd')">
+                            <div tal:condition="fleet.detailstimestamp" tal:replace="python: h.humanreadAge((datetime.now() - fleettuple[3]))" />
+                        </td>
+                        <td tal:condition="python: request.params.has_key('show_lsp')"
+                            class="updater" align="center">
+                            <tal:occupier tal:condition="python: fleet.updater">
+                                <tal:tag tal:condition="python: fleet.updater.guild">
+                                    [<span tal:replace="fleet.updater.guild.tag"/>]
+                                </tal:tag>
+                                <tal:name tal:replace="python: fleet.updater.name">updater
+
+                                </tal:name>
+                            </tal:occupier>
+
+                        </td>
+                        </tal:block>
+                    </tr>
+                </table>
+            </div>
+            <div id="cis_fleets_result" tal:condition="python: not fleets and 'form.submitted' in request.params">
+                <h3>Alas ... nothing matched your search</h3>
+            </div>
+          </div>
+        </tal:block>
+    </body>
+</html>

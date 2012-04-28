@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/cister/!svn/ver/8/trunk/cister/templates/news
+END
+delete.pt
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/cister/!svn/ver/8/trunk/cister/templates/news/delete.pt
+END
+detail.pt
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/cister/!svn/ver/8/trunk/cister/templates/news/detail.pt
+END
+edit.pt
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/cister/!svn/ver/8/trunk/cister/templates/news/edit.pt
+END
+list.pt
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/cister/!svn/ver/8/trunk/cister/templates/news/list.pt
+END

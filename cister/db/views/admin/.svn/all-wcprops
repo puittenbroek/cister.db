@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/cister/!svn/ver/8/trunk/cister/views/admin
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/cister/!svn/ver/8/trunk/cister/views/admin/__init__.py
+END
+useraccesscontrol.py
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/cister/!svn/ver/14/trunk/cister/views/admin/useraccesscontrol.py
+END

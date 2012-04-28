@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <head>
+
+        <tal:meta metal:fill-slot="extra-meta-slot">
+            <title>Cister - Delete News</title>
+        </tal:meta>
+        <tal:meta metal:fill-slot="script_slot">
+            <link   rel="stylesheet"
+                    href="${request.static_url('cister.db:static/css/news.css')}"
+                    type="text/css"
+                    media="screen"
+                    charset="utf-8" />            
+        </tal:meta>
+    </head>
+    <body>
+        <tal:block metal:fill-slot="content">
+            <div id="centerbody">
+                <div class="warning">
+                <form action="${delete_url}" method="post">
+                    <table>
+                      <tr><th>Are you sure you want to delete news item with title <p tal:replace="news.title" /></th></tr>
+                      <tr><td><input type="submit" name="form.submitted" value="Yes"/><a href="/news">No</a></td></tr>
+                    </table>
+                </form>
+                </div>
+            </div>
+        </tal:block>
+    </body>
+</html>

@@ -1,0 +1,12 @@
+from pyramid.security import has_permission
+
+class PermissionMixin(object):
+
+    def in_manage_settings_group(self):
+
+        return has_permission('manage_settings', self.request.context, self.request).boolval
+
+    def in_manage_group(self):
+
+        return has_permission('manage', self.request.context, self.request).boolval
+

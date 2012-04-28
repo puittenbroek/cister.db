@@ -1,0 +1,194 @@
+<tal:macro metal:define-macro="select_filter">
+    <select name="" tal:attributes="name name">
+        <option tal:repeat="opt options"
+                tal:attributes="value python: opt[0];
+                                selected python: '%s' % params.get(name) == '%s'%opt[0] and 'selected' or None"
+                tal:content="python: opt[1]">
+
+        </option>
+    </select>
+</tal:macro>
+<tal:macro metal:define-macro="input_text_filter">
+  <input name="" value="" type=""
+        tal:attributes="name name;
+                        type string:text;
+                        value python: params.get(name) or '';
+                        size size|12"/>
+</tal:macro>
+<tal:macro metal:define-macro="input_checkbox_filter">
+  <input name="" value="" type=""
+        tal:attributes="name name;
+                        type string:checkbox;
+                        value python: params.has_key(name) and '1' or None;
+                        checked python: params.has_key(name) and 'checked' or None"/>
+</tal:macro>
+<tal:block metal:define-macro="search_filters">
+    <h2 tal:content="python: default_search">Refine your search</h2>
+    <table id="filters" class="filters">
+    <tal:filters tal:repeat="filter filters">
+
+        <tr>
+            <td class="filter_label">
+                <label  tal:condition="python: filter.has_key('label')"
+                        tal:content="python:filter.get('label')">Label</label>
+            </td>
+            <td class="filter_value">
+                <tal:innerblock tal:condition="python: filter.get('type') == 'multi'">
+                    <tal:rt tal:repeat="filt python: filter.get('multi')">
+                        <tal:repeater tal:define="name python: filt.get('name');
+                                                  type python: filt.get('type','text');
+                                                  size python: filt.get('size',12);
+                                                  options python: filt.get('options', [])">
+                            <div tal:condition="python: filt.get('type') == 'text'"
+                                metal:use-macro="generic_macros.macros['input_text_filter']" />
+                            <div tal:condition="python: filt.get('type') == 'select'"
+                                metal:use-macro="generic_macros.macros['select_filter']" />
+                            <div tal:condition="python: filt.get('type') == 'checkbox'"
+                                metal:use-macro="generic_macros.macros['input_checkbox_filter']" />
+                        </tal:repeater>
+                    </tal:rt>
+                </tal:innerblock>
+                <tal:innerblock tal:condition="python: filter.get('type') != 'multi'"
+                           tal:define="name python: filter.get('name');
+                                        type python: filter.get('type','text');
+                                        size python: filter.get('size',12);
+                                        options python: filter.get('options',[])">
+                    <div tal:condition="python: filter.get('type') == 'text'"
+                        metal:use-macro="generic_macros.macros['input_text_filter']" />
+                    <div tal:condition="python: filter.get('type') == 'select'"
+                        metal:use-macro="generic_macros.macros['select_filter']" />
+                     <div tal:condition="python: filter.get('type') == 'checkbox'"
+                            metal:use-macro="generic_macros.macros['input_checkbox_filter']" />
+                </tal:innerblock>
+            </td>
+        </tr>
+    </tal:filters>
+    </table>
+</tal:block>
+
+<tal:block metal:define-macro="field_filters">
+    <h2>Select which fields to show</h2>
+    <tal:con tal:condition="python: fieldfilters">
+    <table id="field_filters" class="filters">
+    <tal:filters tal:repeat="filter fieldfilters">
+    <tr>
+        <td>
+            <tal:innerblock tal:define="name python: filter.get('name');
+                                            type string:checkbox;">
+            <div metal:use-macro="generic_macros.macros['input_checkbox_filter']" />
+            </tal:innerblock>
+        </td>
+        <td class="filter_label">
+                <label  tal:condition="python: filter.has_key('label')"
+                        tal:content="python: 'Show %s'%filter.get('label')">Label</label>
+        </td>
+    </tr>
+    </tal:filters>
+    </table>
+
+
+
+    </tal:con>
+</tal:block>
+
+<tal:block metal:define-macro="navigation">
+    <tal:con tal:condition="python: navigation">
+        <ul>
+            <li><b>Navigation:</b></li>
+             <li class="first" tal:condition="python: navigation.page != 1">
+                <a href="#"
+                    tal:attributes="href python: navigation._url_generator(page=1)"
+                >First </a>
+
+            </li >
+            <li class="previous" tal:condition="python: navigation.previous_page">
+                <a href="#"
+                    tal:attributes="href python: navigation._url_generator(page=navigation.previous_page)"
+                >Previous </a>
+
+            </li >
+            <li class="pre-current" tal:repeat="pg_nr python: range(1, navigation.page)[-5:]"
+                tal:attributes="class python: navigation.page == pg_nr and 'current' or ''">
+                 
+                 <a href="#"
+                    tal:attributes="href python: navigation._url_generator(page=pg_nr)"
+                    tal:content="pg_nr"
+                    >1</a>
+            </li>
+            <li class="current" tal:content="navigation.page"></li>
+            <li class="post-current"
+                tal:condition="python: navigation.next_page"
+                tal:repeat="pg_nr python: range(navigation.page+1, h.maxPostPages(navigation))">
+                 <a href="#"
+                    tal:attributes="href python: navigation._url_generator(page=pg_nr)"
+                    tal:content="pg_nr"
+                    >1</a>
+
+            </li>
+            <li tal:condition="python: navigation.next_page">
+                <a href="#"
+                    tal:attributes="href python: navigation._url_generator(page=navigation.next_page)"
+                >Next </a>
+
+            </li>
+        </ul>
+            <div tal:define="item_start python: (navigation.previous_page or 0) * navigation.items_per_page;
+                         item_end python: navigation.page * navigation.items_per_page;">
+            <span tal:content="string: Showing results ${item_start} until ${item_end} of ${navigation.item_count} total"> Results </span>
+
+        </div>
+
+    </tal:con>
+</tal:block>
+<tal:block metal:define-macro="map_info_links">
+     <center tal:define="galaxy request.matchdict.has_key('galaxy') and galaxy or None;
+     region request.matchdict.has_key('region') and region or None;
+     system request.matchdict.has_key('system') and system or None;
+     astro request.matchdict.has_key('astro') and astro or None;">
+                <h1>Viewing database information of:
+                    <a href="map.aspx?gal=A07"
+                        tal:condition="python: region"
+                        tal:attributes="href string:/map/A${galaxy}"
+                        tal:content="string: Galaxy A${galaxy}">Galaxy A0</a> 
+                    <span
+                         tal:condition="python: not region"
+                         tal:replace="string: Galaxy A${galaxy}">
+                             Region XX &nbsp; &nbsp; &nbsp; (A07:16:51:30) &nbsp;
+                             </span>
+                    <tal:region tal:condition="python: region">
+                        &gt;
+                        <a href="map.aspx?loc=A07:16"
+                            tal:condition="python: system"
+                            tal:attributes="href string:/map/A${galaxy}:${region}"
+                            tal:content="string: Region ${region}">Region 16</a> 
+                        <span
+                             tal:condition="python: not system"
+                             tal:replace="string: Region ${region}&nbsp; &nbsp; &nbsp; (${location}) ">
+                                 Region XX &nbsp; &nbsp; &nbsp; (A07:16:51:30) &nbsp;
+                                 </span>
+
+                        <tal:system tal:condition="python: system">
+                            &gt;
+                            <a href="map.aspx?loc=A07:16:51"
+                                tal:condition="python: astro"
+                                tal:attributes="href string:/map/A${galaxy}:${region}:${system}"
+                                tal:content="string: System ${system}">System 51</a> &gt;
+                            <span
+                                 tal:condition="python: not astro"
+                                 tal:replace="string: System ${astro}&nbsp; &nbsp; &nbsp; (${location}) ">
+                                     Astro 30 &nbsp; &nbsp; &nbsp; (A07:16:51:30) &nbsp;
+                                     </span>
+                        </tal:system>
+                    </tal:region>
+                    </h1>
+                    <a href="" tal:attributes="href string:http://alpha.astroempires.com/map.aspx?loc=${location}">
+                        Visit this location in Astro Empires
+                    </a>
+            </center>
+
+
+
+
+
+
+</tal:block>

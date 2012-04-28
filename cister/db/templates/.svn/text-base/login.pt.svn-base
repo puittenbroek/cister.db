@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+        <title tal:content="string:Cister - Login">Cister - Galaxy</title>
+    </tal:meta>
+    <tal:scripts metal:fill-slot="script_slot">
+    </tal:scripts>
+    <body metal:fill-slot="content" >
+        <div id="centerbody" class="login">
+            <form action="" method="POST">
+                <div tal:condition="message"
+                     class="message"
+                     tal:content="message">
+                         You do not have the required permissions to see this page.
+                </div>
+                <table tal:condition="not logged_in">
+                    <fieldset id="login_form">
+                        <tr tal:define="error python:'username' in errors and 'error' or ''"
+                            tal:attributes="class python:'%s %s' % ('field', error)">
+                            <td>
+                                <label for="playerid">Player ID</label>
+                            </td>
+                            <td>
+                                <input tal:attributes="value user.playerid" type="text" name="playerid" id="playerid"></input>
+                            </td>
+                            <td tal:condition="error">
+                                <big tal:content="errors.playerid"/>
+                            </td>
+                        </tr>
+
+                        <tr tal:define="error python:'password' in errors and 'error' or ''"
+                            tal:attributes="class python:'%s %s' % ('field', error)">
+                            <td>
+                                <label for="password">Password</label>
+                            </td>
+                            <td>
+                                <input type="password" name="password" id="password"></input>
+                            </td>
+                            <td tal:condition="error">
+                                <big tal:content="errors.password"/>
+                            </td>
+                        </tr>
+                        <tr tal:define="error python:'code' in errors and 'error' or ''"
+                            tal:attributes="class python:'%s %s' % ('field', error)">
+                            <td>
+                                <label for="code">Custom Code</label>
+                                </td>
+                            <td>
+                                <input type="code" name="code" id="code"></input>
+                            </td>
+                            <td><big tal:condition="error" tal:content="errors.code"/>
+                                <small tal:condition="error" class="formHelp">
+                                    (You can find the Custom Code using the CIS Script and visiting your account page.)
+                                </small>
+                                </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="formAdditionalInfo">
+                                    <input type="checkbox" name="remember"
+                                           tal:attributes="checked remember or request.params.get('remember', nothing)">
+                                           Remember my login
+                                    </input>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="formControls">
+                                    <input name="form.submitted" type="submit" value="inloggen"/>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </fieldset>
+                </table>
+            </form>
+            <div class="clearer">&nbsp;</div>
+        </div>
+    </body>
+</html>
+

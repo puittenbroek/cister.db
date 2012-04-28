@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/cister/!svn/ver/2/trunk/cister/views/map
+END
+astro.py
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/cister/!svn/ver/8/trunk/cister/views/map/astro.py
+END
+generic.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/cister/!svn/ver/8/trunk/cister/views/map/generic.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/cister/!svn/ver/2/trunk/cister/views/map/__init__.py
+END
+region.py
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/cister/!svn/ver/14/trunk/cister/views/map/region.py
+END
+system.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/cister/!svn/ver/8/trunk/cister/views/map/system.py
+END
+galaxy.py
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/cister/!svn/ver/8/trunk/cister/views/map/galaxy.py
+END
+index.py
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/cister/!svn/ver/8/trunk/cister/views/map/index.py
+END

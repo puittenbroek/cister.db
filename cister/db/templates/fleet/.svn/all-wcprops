@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/cister/!svn/ver/2/trunk/cister/templates/fleet
+END
+show.pt
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/cister/!svn/ver/8/trunk/cister/templates/fleet/show.pt
+END
+search.pt
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/cister/!svn/ver/8/trunk/cister/templates/fleet/search.pt
+END

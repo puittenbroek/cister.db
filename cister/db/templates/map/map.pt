@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="main">
+
+    <tal:meta metal:fill-slot="extra-meta-slot">
+         <title>Cister - Map</title>
+
+         <style type="text/css" tal:repeat="leg legenda" tal:content="string:td.${leg['class']} { background: ${leg['color']};}" />
+    </tal:meta>
+   <body metal:fill-slot="content" >
+       <div id="galaxies-links">
+           <center>
+                   <b>
+                       <tal:block tal:repeat="gal python: range(0,80)">
+                          <tal:con tal:condition="repeat.gal.index % 10 == 0 and repeat.gal.index != 0">
+                           <br/>
+                       </tal:con>
+                       <tal:con tal:condition="repeat.gal.index % 10 != 0 and repeat.gal.index != 0">
+                       &nbsp;-&nbsp;
+                       </tal:con>
+                       <a
+                          tal:content="string:A${h.twodigitNumbers(gal)}"
+                          tal:attributes="href string:/map/A${h.twodigitNumbers(gal)}"
+                          >
+                       </a>
+
+                       </tal:block>
+                   </b>
+           </center>
+       </div>
+       <div id="centerbody" class="map overview">
+
+             <tal:block tal:repeat="gal_group python: [x for x in range(0,8)]">
+                       <table class="galaxy_overview">
+                       <thead>
+                           <tr>
+                               <th tal:repeat="hdr python: ['Galaxy','Bases','Astros', 'Average Age']" tal:content="hdr"/>
+                           </tr>
+                       </thead>
+                        <tbody tal:define="max_gal python: (gal_group+1)*10;
+                                           min_gal python: gal_group * 10">
+                           <tr tal:repeat="gal python: ['A%s'%h.twodigitNumbers(x) for x in range(min_gal,max_gal)]"
+                               >
+                               <td class="gal_link">
+                                   <a tal:content="gal"
+                                      tal:attributes="href string:/map/${gal}" />
+                               </td>
+                               <td class="gal_bases" tal:content="galaxies[gal]['base_count']">
+                               </td>
+                               <td class="gal_astros" tal:content="galaxies[gal]['astro_count']">
+                               </td>
+                               <td class="gal_bases_age" 
+                                    tal:attributes="class string: gal_bases_age ${galaxies[gal]['base_age']['class']}"
+                                    tal:content="galaxies[gal]['base_age']['label']" >
+                               </td>
+                           </tr>
+                       </tbody>
+                       </table>
+              </tal:block>
+              <div class="clearer">&nbsp;</div>
+       </div>
+   </body>
+</html>
+
