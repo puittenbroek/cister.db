@@ -26,11 +26,16 @@ class User(BaseModel):
     creation        = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
     activated       = Column(Boolean, default=0)
     activated_on    = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
+    activated_by    = Column(Unicode(10))
+    deactivated_on  = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
+    deactivated_by  = Column(Unicode(10))
     banned          = Column(Boolean, default=0)
     banned_on       = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
+    banned_by       = Column(Unicode(10))
     last_activity   = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
     last_script     = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
     last_web        = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
+    alias 	    = Column(Unicode(45))
 
     player = relationship("Player",
         primaryjoin='User.playerid==Player.id',
@@ -45,7 +50,14 @@ class User(BaseModel):
         join_depth=3,
         lazy='joined',
         uselist=False,)
+    
+    #Bases
+    submittedbases = relationship("Base", primaryjoin='Base.submitid==User.playerid', lazy='select')
+    updatedbases = relationship("Base", primaryjoin='Base.updateid==User.playerid', lazy='select')
 
+    #Fleets
+    submittedfleets = relationship("Fleet", primaryjoin='Fleet.submitid==User.playerid',lazy='select')
+    updatedfleets = relationship("Fleet", primaryjoin='Fleet.updateid==User.playerid',lazy='select')
 #    groups = relationship("Group",
 #        secondary=GroupMembershipTable,
 #        primaryjoin=playerid==GroupMembershipTable.c.userid,
@@ -71,15 +83,11 @@ class Player(BaseModel):
 
     ##Fleets
     fleets = relationship("Fleet", primaryjoin='Fleet.ownerid==Player.id',lazy='select')
-    submittedfleets = relationship("Fleet", primaryjoin='Fleet.submitid==Player.id',lazy='select')
-    updatedfleets = relationship("Fleet", primaryjoin='Fleet.updateid==Player.id',lazy='select')
 
     ##Bases
     ownedbases = relationship("Base", primaryjoin='Base.ownerid==Player.id',lazy='select')
     occupiedbases = relationship("Base", primaryjoin='Base.occupierid==Player.id', lazy='select')
 
-    submittedbases = relationship("Base", primaryjoin='Base.submitid==Player.id', lazy='select')
-    updatedbases = relationship("Base", primaryjoin='Base.updateid==Player.id', lazy='select')
 
     guild = relationship("GuildInfo",
         secondary=GuildMembershipTable,
@@ -111,13 +119,4 @@ def addUserMapping():
         join_depth=3,
         lazy='joined',
         uselist=True,)
-
-#    def __init__(self, id, name,
-#                level, timestamp ):
-#        self.id = id
-#        self.name = name
-#        self.level =  level
-#        self.timestamp =  timestamp
-#
-
 

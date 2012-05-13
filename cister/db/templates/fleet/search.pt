@@ -124,15 +124,7 @@
                         </td>
                         <td tal:condition="python: request.params.has_key('show_lsp')"
                             class="updater" align="center">
-                            <tal:occupier tal:condition="python: fleet.updater">
-                                <tal:tag tal:condition="python: fleet.updater.guild">
-                                    [<span tal:replace="fleet.updater.guild.tag"/>]
-                                </tal:tag>
-                                <tal:name tal:replace="python: fleet.updater.name">updater
-
-                                </tal:name>
-                            </tal:occupier>
-
+			    <tal:block tal:replace="structure fleet.updater and fleet.updater.alias or ''"> Owner </tal:block>
                         </td>
                         </tal:block>
                     </tr>

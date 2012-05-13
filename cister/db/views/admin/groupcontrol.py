@@ -31,7 +31,10 @@ class GroupControlView(BaseCisterView):
             group = session.query(Group).filter(Group.id==groupid).one()
             returnvalue['group'] =  group
 
-            users = session.query(User).filter(~User.groups.any(Group.id==groupid)).order_by(User.playerid)
+            users = session.query(User).filter(~User.groups.any(Group.id==groupid))
+            users = users.join(User.guild)
+            users = users.join(User.player)
+            users = users.order_by(GuildInfo.id, Player.name)
             returnvalue['optional_users'] =  users
 
         guilds = session.query(GuildInfo).filter(GuildInfo.alive==1)

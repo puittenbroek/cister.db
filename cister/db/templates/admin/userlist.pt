@@ -16,7 +16,6 @@
                     media="screen"
                     charset="utf-8" />
               <script src="${request.static_url('cister.db:static/js/jquery.tablesorter.js')}" type="text/javascript"></script>
-              <!--script src="${request.static_url('cister.db:static/js/jquery.metadata.js')}" type="text/javascript"></script-->
               <script src="${request.static_url('cister.db:static/js/admin.js')}" type="text/javascript"></script>
 
         </tal:meta>
@@ -43,7 +42,7 @@
                         <tbody>
                         <tr tal:repeat="user to_activate">
                             <td tal:content="user.playerid" />
-                            <td tal:content="h.humanreadPlayer(user.player)" tal:attributes="title user.guild and user.guild.name or ''"/>
+                            <td tal:content="h.humanreadPlayer(user.player)" tal:attributes="title user.guild and user.guild.id or -1"/>
                             <td><form action="" method="POST">
                                 <input type="hidden" name="playerid" tal:attributes="value user.playerid" />
                                 <input type="submit" class="activate" name="activate" value="Activate "/>
@@ -69,8 +68,8 @@
                         <tbody>
                         <tr tal:repeat="user activate">
                             <td tal:content="user.playerid" />
-                            <td tal:content="h.humanreadPlayer(user.player)" tal:attributes="title user.guild and user.guild.name or ''"/>
-                            <td tal:content="h.humanreadAge((datetime.now() - user.activated_on), True)" />
+                            <td tal:content="h.humanreadPlayer(user.player)" tal:attributes="title user.player.name"/>
+                            <td tal:content="h.humanreadAge((datetime.now() - user.activated_on), True)" tal:attributes="title datetime.now() - user.activated_on"/>
 
                             <td tal:content="h.humanreadLastActivity(user.last_script, user.last_web) " />
                             <td><form action="" method="POST">

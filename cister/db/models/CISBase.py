@@ -17,9 +17,9 @@ class Base(BaseModel):
     cc =  Column(Integer, default=-1)
     jg =  Column(Integer, default=-1)
     capital =  Column(Integer, default=-1)
-    submitid =  Column(Integer,ForeignKey("player.id"))
+    submitid =  Column(Integer,ForeignKey("cis_users.playerid"))
     defense =  Column(Unicode(84))
-    updateid =  Column(Integer,ForeignKey("player.id"))
+    updateid =  Column(Integer,ForeignKey("cis_users.playerid"))
     timestamp =  Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
     defensetimestamp =  Column(TIMESTAMP, default='0000-00-00 00:00:00')
     loc_gal =  Column(Unicode(3))
@@ -36,12 +36,12 @@ class Base(BaseModel):
         primaryjoin='Base.occupierid==Player.id',
         join_depth=3,
         lazy='joined')
-    submitter = relationship("Player",
-        primaryjoin='Base.submitid== Player.id',
+    submitter = relationship("User",
+        primaryjoin='Base.submitid== cis_users.c.playerid',
         join_depth=3,
         lazy='joined')
-    updater= relationship("Player",
-        primaryjoin='Base.updateid== Player.id',
+    updater= relationship("User",
+        primaryjoin='Base.updateid== cis_users.c.playerid',
         join_depth=3,
         lazy='joined')
 

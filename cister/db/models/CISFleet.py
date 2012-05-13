@@ -18,21 +18,21 @@ class Fleet(BaseModel):
     arrival =  Column(Integer, default=-1)
     size =  Column(Integer, default=-1)
     timestamp =  Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
-    submitid =  Column(Integer,ForeignKey("player.id"))
+    submitid =  Column(Integer,ForeignKey("cis_users.playerid"))
     details =  Column(Unicode(400))
-    updateid =  Column(Integer,ForeignKey("player.id"))
+    updateid =  Column(Integer,ForeignKey("cis_users.playerid"))
     detailstimestamp =  Column(TIMESTAMP, default='0000-00-00 00:00:00')
 
     owner = relationship("Player",
         primaryjoin='Fleet.ownerid==Player.id',
         join_depth=10,
         lazy='joined')
-    submitter = relationship("Player",
-        primaryjoin='Fleet.submitid== Player.id',
+    submitter = relationship("User",
+        primaryjoin='Fleet.submitid== cis_users.c.playerid',
         join_depth=10,
         lazy='joined')
-    updater= relationship("Player",
-        primaryjoin='Fleet.updateid== Player.id',
+    updater= relationship("User",
+        primaryjoin='Fleet.updateid== cis_users.c.playerid',
         join_depth=10,
         lazy='joined')
 #    def __init__(self, id, location, ownerid, arrival, size,

@@ -101,7 +101,7 @@
                         </td>
                         <td tal:condition="python: request.params.has_key('show_lsp')"
                             class="updater" align="center">
-                            <tal:block tal:replace="structure h.humanreadPlayer(base.updater)"> Owner </tal:block>
+                            <tal:block tal:replace="structure base.updater and base.updater.alias or ''"> Owner </tal:block>
                         </td>
                     </tr>
                 </table>
